@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Le core ne connaît que l'identité, les accès et la clé maître (blobs opaques).
+// Les données des modules (mots de passe, fichiers...) vivent dans leur propre BDD.
+
+model users {
+  user_id           Int       @id @default(autoincrement())
+  firstName         String    @default("")
+  lastName          String    @default("")
+  email             String    @default("")
+  password_hash     String?
+  is_active         Boolean   @default(false)
+  is_email_verified Boolean   @default(false)
+  created_at        DateTime  @default(now())
+  updated_at        DateTime? @updatedAt
+
+  // Clé maître chiffrée côté client (format "iv:tag:ciphertext" en hex)
+  encrypted_master_key          String? @db.Text // chiffrée par la KEK du mot de passe
+  kek_salt                      String? @db.VarChar(64)
+  // Récupération par questions de sécurité
+  recovery_questions            Json? // [{ question, answer_hash }]
+  recovery_encrypted_master_key String? @db.Text // chiffrée par la KEK des réponses
+  recovery_kek_salt             String? @db.VarChar(64)
+
+  tokens      tokens[]
+  sessions    sessions[]
+  userRoles   userRoles[]
+  userModules userModules[]
+
+  @@index([email, is_email_verified])
+}
+
+// Tokens à usage unique, aléatoires, stockés hachés
+model tokens {
+  token_id   Int       @id @default(autoincrement())
+  user_id    Int
+  token_hash String    @unique @db.VarChar(64)
+  type       String // email_verification | activate | password_reset | password_reset_verified
+  expires_at DateTime?
+  created_at DateTime  @default(now())
+  user       users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+}
+
+// Une session = un appareil connecté. Le JWT d'accès contient le session_id,
+// ce qui permet la révocation immédiate (introspection) sans stocker les access tokens.
+model sessions {
+  session_id        Int       @id @default(autoincrement())
+  user_id           Int
+  refresh_hash      String    @unique @db.VarChar(64)
+  prev_refresh_hash String?   @db.VarChar(64) // tolérance 30 s pour les refresh concurrents
+  rotated_at        DateTime?
+  created_at        DateTime  @default(now())
+  expires_at        DateTime
+  user              users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([prev_refresh_hash])
+  @@index([user_id])
+}
+
+model roles {
+  role_id   Int         @id @default(autoincrement())
+  role      String      @unique @db.VarChar(64) // ADMIN | USER
+  userRoles userRoles[]
+}
+
+model userRoles {
+  user_id Int
+  role_id Int
+  user    users @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  role    roles @relation(fields: [role_id], references: [role_id])
+
+  @@id([user_id, role_id])
+}
+
+// Registre des modules (rempli par auto-enregistrement au démarrage de chaque module)
+model modules {
+  module_id     String   @id @db.VarChar(64)
+  name          String
+  icon          String   @default("apps")
+  path          String // ex: /passwords
+  internal_url  String? // ex: http://passwords-backend:3000 (appels core -> module)
+  version       String?
+  is_enabled    Boolean  @default(true)
+  auto_grant    Boolean  @default(false) // accès donné automatiquement aux nouveaux comptes
+  registered_at DateTime @default(now())
+  last_seen_at  DateTime @default(now())
+
+  userModules userModules[]
+}
+
+model userModules {
+  user_id    Int
+  module_id  String   @db.VarChar(64)
+  granted_at DateTime @default(now())
+  user       users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  module     modules  @relation(fields: [module_id], references: [module_id], onDelete: Cascade)
+
+  @@id([user_id, module_id])
+}

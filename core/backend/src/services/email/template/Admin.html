@@ -1,0 +1,133 @@
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  </head>
+  <body
+    style="
+      background-color: #000000;
+      font-family:
+        -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 40px 20px;
+      margin: 0;
+    "
+  >
+    <div
+      style="
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #000000;
+        border: 2px solid #ffffff;
+        border-radius: 22px;
+        padding: 40px 32px;
+        color: #ffffff;
+      "
+    >
+      <!-- Header -->
+      <div style="text-align: center; margin-bottom: 32px">
+        <h1
+          style="
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffffff;
+            margin: 0 0 16px 0;
+            text-shadow: 0px 0px 3px #c25fff;
+            font-family: 'Poppins', sans-serif;
+          "
+        >
+          Demande en attente
+        </h1>
+      </div>
+
+      <!-- Titre principal -->
+      <p
+        style="
+          font-size: 18px;
+          color: #ffffff;
+          margin: 0 0 16px 0;
+          font-weight: 600;
+        "
+      >
+        Nouvelle inscription utilisateur
+      </p>
+
+      <p
+        style="
+          font-size: 16px;
+          color: #d1d5db;
+          margin: 0 0 24px 0;
+          line-height: 24px;
+        "
+      >
+        Un nouvel utilisateur vient de s'inscrire sur votre plateforme. <br />
+        Voici ses informations :
+      </p>
+
+      <!-- Bloc d'informations utilisateur -->
+      <div
+        style="
+          background-color: #1f2937;
+          border-left: 4px solid #c25fff;
+          padding: 16px;
+          border-radius: 8px;
+          margin-bottom: 24px;
+        "
+      >
+        <p style="font-size: 14px; color: #9ca3af; margin: 0 0 8px 0">
+          <strong style="color: #d1d5db">Prénom :</strong> {{firstName}}
+        </p>
+        <p style="font-size: 14px; color: #9ca3af; margin: 0 0 8px 0">
+          <strong style="color: #d1d5db">Nom :</strong> {{lastName}}
+        </p>
+        <p style="font-size: 14px; color: #9ca3af; margin: 0 0 8px 0">
+          <strong style="color: #d1d5db">Email :</strong> {{email}}
+        </p>
+        <p style="font-size: 14px; color: #9ca3af; margin: 0">
+          <strong style="color: #d1d5db">Date d'inscription :</strong>
+          {{date}}
+        </p>
+      </div>
+
+      <!-- CTA pour valider/refuser -->
+      <p
+        style="
+          font-size: 16px;
+          color: #d1d5db;
+          margin: 0 0 16px 0;
+          line-height: 24px;
+        "
+      >
+        Accédez à votre tableau de bord pour
+        <strong style="color: #c25fff">valider ou refuser</strong> cette
+        inscription.
+      </p>
+
+      <div style="text-align: center; margin-bottom: 24px">
+        <a
+          href="{{adminURL}}"
+          style="
+            background-color: #c25fff;
+            color: #fff;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            box-sizing: border-box;
+          "
+        >
+          Accéder au tableau de bord
+        </a>
+      </div>
+
+      <hr style="margin: 24px 0; border: none; border-top: 1px solid #c25fff" />
+
+      <p style="font-size: 14px; color: #9ca3af; margin: 0; text-align: center">
+        Cet email a été généré automatiquement. Vous recevrez une notification
+        pour chaque nouvelle inscription.
+      </p>
+    </div>
+  </body>
+</html>

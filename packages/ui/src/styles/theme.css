@@ -12,6 +12,7 @@
 
 html,
 body {
+  background: #000;
   overflow: hidden;
   height: 100%;
   margin: 0;
