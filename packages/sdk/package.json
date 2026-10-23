@@ -1,0 +1,12 @@
+{
+  "name": "@myprout/sdk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./server": "./src/server/index.js",
+    "./client": "./src/client/index.js"
+  }
+}

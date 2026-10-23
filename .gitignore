@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+secrets/*
+!secrets/.gitkeep
+*.log
+.DS_Store

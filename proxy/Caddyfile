@@ -1,0 +1,23 @@
+# Point d'entrée unique : tout est sur la même origine,
+# donc cookies (sameSite=strict) et IndexedDB sont partagés entre core et modules.
+{$SITE_ADDRESS::80} {
+	encode gzip
+
+	# ── APIs ──
+	handle /api/core/* {
+		reverse_proxy core-backend:3000
+	}
+	handle /api/passwords/* {
+		reverse_proxy passwords-backend:3000
+	}
+
+	# ── Frontends des modules (un bloc par module) ──
+	handle /passwords* {
+		reverse_proxy passwords-frontend:80
+	}
+
+	# ── Core frontend (lobby, login, profil, admin) : par défaut ──
+	handle {
+		reverse_proxy core-frontend:80
+	}
+}

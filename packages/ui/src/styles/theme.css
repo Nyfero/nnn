@@ -1,0 +1,206 @@
+/* ───────── Tokens ───────── */
+:root {
+  --mp-accent: #c25fff;
+  --mp-accent-dark: #8342cf;
+  --mp-highlight: #f9f0a8;
+  --mp-danger: #ff4d4d;
+  --mp-success: #4bb543;
+  --mp-muted: #aaa;
+  --mp-card-bg: rgba(10, 10, 10, 0.05);
+  --mp-input-bg: rgba(28, 28, 32, 1);
+}
+
+html,
+body {
+  overflow: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  height: 100%;
+}
+
+* {
+  scrollbar-width: none; /* Firefox */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+/* ───────── Main theme ───────── */
+
+.themed-card {
+  background: var(--mp-card-bg);
+  border: 2px solid #fff;
+  border-radius: 22px;
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(7px);
+  color: #fff;
+}
+
+.themed-h1 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  padding: 0;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0px 0px 3px var(--mp-accent);
+  font-family: 'Poppins', sans-serif;
+}
+
+.themed-h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  padding: 0;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0px 0px 3px var(--mp-accent);
+  font-family: 'Poppins', sans-serif;
+}
+
+.themed-input {
+  margin: 8px 0;
+  padding: 10px;
+  width: 95%;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  background: var(--mp-input-bg);
+  color: #fff;
+  outline: none;
+  font-size: 1rem;
+}
+.themed-textarea:focus,
+.themed-input:focus {
+  border: 1px solid var(--mp-accent);
+  transition: 0.5s;
+}
+
+.themed-textarea {
+  margin: 8px 0;
+  padding: 0.6rem 0.9rem;
+  width: 95%;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  background: var(--mp-input-bg);
+  color: #fff;
+  outline: none;
+  font-size: 0.95rem;
+  resize: none;
+}
+
+.themed-button {
+  width: 100%;
+  border-radius: 12px;
+  border: none;
+  padding: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-primary {
+  background: linear-gradient(90deg, var(--mp-accent), var(--mp-accent-dark));
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: 1s;
+}
+.button-primary:hover {
+  filter: brightness(1.3);
+  transition: 1s;
+}
+.button-primary:disabled {
+  background: linear-gradient(90deg, var(--mp-accent), var(--mp-accent-dark));
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.button-secondary {
+  background: none;
+  color: grey;
+  font-size: 1rem;
+  transition: 1s;
+}
+.button-secondary:hover {
+  color: var(--mp-accent);
+  transition: 1s;
+  background-color: var(--mp-input-bg);
+}
+
+.button-danger {
+  background-color: var(--mp-danger);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.button-danger:hover {
+  background-color: #cc0000;
+}
+.button-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.themed-label {
+  font-size: 1rem;
+  padding: 0;
+  font-weight: 300;
+  color: #fff;
+  text-shadow: 0px 0px 3px var(--mp-accent);
+  font-family: 'Poppins', sans-serif;
+}
+
+.themed-separator {
+  border: none;
+  margin: 0.2rem 0;
+  border-top: 1px solid var(--mp-accent);
+  opacity: 0.3;
+}
+
+.toggle-password,
+.copy-btn {
+  background: transparent;
+  border: none;
+  color: var(--mp-muted);
+  cursor: pointer;
+  display: flex;
+  margin-top: 0;
+}
+.toggle-password:hover,
+.copy-btn:hover {
+  color: var(--mp-accent);
+}
+
+.form-error {
+  color: #ff5555;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.char-counter {
+  font-size: 0.75rem;
+  color: #888;
+  text-align: right;
+  margin-top: 4px;
+  display: block;
+  pointer-events: none;
+}
+.char-counter.near-limit {
+  color: #e74c3c;
+}
+
+/* ───────── Helpers ───────── */
+.flex-1 {
+  flex: 1;
+}
+
+.flex-2 {
+  flex: 2;
+}

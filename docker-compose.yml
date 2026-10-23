@@ -1,0 +1,136 @@
+# Phase 1 : `docker compose up -d proxy core-db passwords-db` fonctionne déjà.
+# Les services applicatifs (core-*, passwords-*) seront buildables aux phases 2 à 4.
+# Le contexte de build est la racine du repo pour pouvoir embarquer packages/ui et packages/sdk.
+
+name: myprout
+
+x-mysql-healthcheck: &mysql-healthcheck
+  interval: 5s
+  timeout: 5s
+  retries: 20
+
+services:
+  # ───────────── Proxy ─────────────
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    volumes:
+      - ./proxy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [edge]
+
+  # ───────────── Core ─────────────
+  core-db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${CORE_DB_NAME}
+      MYSQL_USER: ${CORE_DB_USER}
+      MYSQL_PASSWORD: ${CORE_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${CORE_DB_ROOT_PASSWORD}
+    volumes:
+      - core_db_data:/var/lib/mysql
+    healthcheck:
+      <<: *mysql-healthcheck
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${CORE_DB_ROOT_PASSWORD}"]
+    networks: [core-internal]
+
+  core-backend:
+    build:
+      context: .
+      dockerfile: core/backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      core-db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3000
+      FRONTEND_URL: ${FRONTEND_URL}
+      DATABASE_URL: mysql://${CORE_DB_USER}:${CORE_DB_PASSWORD}@core-db:3306/${CORE_DB_NAME}
+      JWT_PRIVATE_KEY_PATH: ${JWT_PRIVATE_KEY_PATH}
+      JWT_PUBLIC_KEY_PATH: ${JWT_PUBLIC_KEY_PATH}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_FIRSTNAME: ${ADMIN_FIRSTNAME}
+      ADMIN_LASTNAME: ${ADMIN_LASTNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      MODULE_SECRET_PASSWORDS: ${MODULE_SECRET_PASSWORDS}
+    volumes:
+      - ./secrets/jwt_private.pem:/run/secrets/jwt_private.pem:ro
+      - ./secrets/jwt_public.pem:/run/secrets/jwt_public.pem:ro
+    networks: [edge, core-internal]
+
+  core-frontend:
+    build:
+      context: .
+      dockerfile: core/frontend/Dockerfile
+    restart: unless-stopped
+    networks: [edge]
+
+  # ───────────── Module : passwords ─────────────
+  passwords-db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${PASSWORDS_DB_NAME}
+      MYSQL_USER: ${PASSWORDS_DB_USER}
+      MYSQL_PASSWORD: ${PASSWORDS_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${PASSWORDS_DB_ROOT_PASSWORD}
+    volumes:
+      - passwords_db_data:/var/lib/mysql
+    healthcheck:
+      <<: *mysql-healthcheck
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${PASSWORDS_DB_ROOT_PASSWORD}"]
+    networks: [passwords-internal]
+
+  passwords-backend:
+    build:
+      context: .
+      dockerfile: modules/passwords/backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      passwords-db:
+        condition: service_healthy
+      core-backend:
+        condition: service_started
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3000
+      DATABASE_URL: mysql://${PASSWORDS_DB_USER}:${PASSWORDS_DB_PASSWORD}@passwords-db:3306/${PASSWORDS_DB_NAME}
+      # Contrat module <-> core
+      CORE_URL: http://core-backend:3000
+      MODULE_ID: passwords
+      MODULE_NAME: Mots de passe
+      MODULE_ICON: security
+      MODULE_PATH: /passwords
+      MODULE_SECRET: ${MODULE_SECRET_PASSWORDS}
+      LOGO_DEV_TOKEN: ${LOGO_DEV_TOKEN}
+    networks: [edge, core-internal, passwords-internal]
+
+  passwords-frontend:
+    build:
+      context: .
+      dockerfile: modules/passwords/frontend/Dockerfile
+    restart: unless-stopped
+    networks: [edge]
+
+networks:
+  # Réseau exposé au proxy
+  edge:
+  # Le core-backend est joignable par les modules (introspection, enregistrement)
+  core-internal:
+  # Chaque module a son réseau privé pour sa BDD
+  passwords-internal:
+
+volumes:
+  caddy_data:
+  caddy_config:
+  core_db_data:
+  passwords_db_data:
