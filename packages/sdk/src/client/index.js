@@ -1,5 +1,6 @@
 export * from './crypto.js'
 export * from './vault.js'
 export * from './keystore.js'
+export * from './session.js'
 export { createApi, refreshSession } from './api.js'
 export { createInactivityGuard } from './inactivity.js'

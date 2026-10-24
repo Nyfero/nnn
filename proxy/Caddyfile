@@ -12,7 +12,8 @@
 	}
 
 	# ── Frontends des modules (un bloc par module) ──
-	handle /passwords* {
+	@passwords path /passwords /passwords/*
+	handle @passwords {
 		reverse_proxy passwords-frontend:80
 	}
 

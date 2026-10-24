@@ -10,7 +10,9 @@ export function createInactivityGuard({ timeout = 20 * 60 * 1000, onTimeout }) {
 
   return {
     start() {
-      events.forEach((e) => window.addEventListener(e, reset, { passive: true }))
+      events.forEach((e) =>
+        window.addEventListener(e, reset, { passive: true })
+      )
       reset()
     },
     stop() {

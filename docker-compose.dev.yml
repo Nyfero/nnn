@@ -2,8 +2,10 @@
 # Expose les ports en local uniquement (pour Prisma, un client SQL, curl...).
 services:
   core-db:
-    ports: ["127.0.0.1:3307:3306"]
+    ports: ['127.0.0.1:3307:3306']
   passwords-db:
-    ports: ["127.0.0.1:3308:3306"]
+    ports: ['127.0.0.1:3308:3306']
   core-backend:
-    ports: ["127.0.0.1:3000:3000"]
+    ports: ['127.0.0.1:3000:3000']
+  passwords-backend:
+    ports: ['127.0.0.1:3001:3000']

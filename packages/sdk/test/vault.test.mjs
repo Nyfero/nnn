@@ -19,7 +19,10 @@ import {
 } from '../../../core/backend/src/utils/crypto.ts'
 
 const ANSWERS = ['Rex', 'Lyon', 'Paul']
-const user = (v) => ({ kek_salt: v.kek_salt, encrypted_master_key: v.encrypted_master_key })
+const user = (v) => ({
+  kek_salt: v.kek_salt,
+  encrypted_master_key: v.encrypted_master_key,
+})
 
 function serverDecrypt(blob, kek) {
   const [iv, tag, ct] = blob.split(':').map((h) => Buffer.from(h, 'hex'))
@@ -51,7 +54,10 @@ test('la normalisation des réponses ignore casse et espaces', async () => {
 test('client -> serveur : le serveur déchiffre un blob client', async () => {
   const v = await createVault('Secret!123', ANSWERS)
   const kek = await serverKek('Secret!123', Buffer.from(v.kek_salt, 'hex'))
-  assert.equal(serverDecrypt(v.encrypted_master_key, kek), await decryptMasterKeyHex('Secret!123', user(v)))
+  assert.equal(
+    serverDecrypt(v.encrypted_master_key, kek),
+    await decryptMasterKeyHex('Secret!123', user(v))
+  )
 })
 
 test('serveur -> client : le client déchiffre le blob du seed admin', async () => {
@@ -59,7 +65,10 @@ test('serveur -> client : le client déchiffre le blob du seed admin', async () 
   const kek_salt = generateSalt()
   const kek = await serverKek('AdminPw!1', Buffer.from(kek_salt, 'hex'))
   const encrypted_master_key = serverEncrypt(masterKey, kek)
-  assert.equal(await decryptMasterKeyHex('AdminPw!1', { kek_salt, encrypted_master_key }), masterKey)
+  assert.equal(
+    await decryptMasterKeyHex('AdminPw!1', { kek_salt, encrypted_master_key }),
+    masterKey
+  )
 })
 
 test('changement de mot de passe : même clé maître, nouveau sel', async () => {
@@ -81,11 +90,17 @@ test('HKDF : clés de module déterministes, distinctes entre modules', async ()
   const enc = async (key) => {
     const iv = new Uint8Array(12)
     return Buffer.from(
-      await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode('test'))
+      await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        new TextEncoder().encode('test')
+      )
     ).toString('hex')
   }
   const a1 = await enc(await deriveModuleKey(master, 'passwords'))
-  const a2 = await enc(await deriveModuleKey(await importMasterKey(hex), 'passwords'))
+  const a2 = await enc(
+    await deriveModuleKey(await importMasterKey(hex), 'passwords')
+  )
   const b = await enc(await deriveModuleKey(master, 'files'))
   assert.equal(a1, a2)
   assert.notEqual(a1, b)

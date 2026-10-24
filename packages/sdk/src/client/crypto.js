@@ -51,7 +51,11 @@ export async function deriveKek(secret, saltHex) {
 export async function encryptKey(keyHex, kek) {
   const iv = crypto.getRandomValues(new Uint8Array(12))
   const encrypted = new Uint8Array(
-    await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, kek, hexToBytes(keyHex))
+    await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv },
+      kek,
+      hexToBytes(keyHex)
+    )
   )
   const tag = encrypted.slice(-16)
   const ciphertext = encrypted.slice(0, -16)

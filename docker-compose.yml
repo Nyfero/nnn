@@ -15,8 +15,8 @@ services:
     image: caddy:2-alpine
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     environment:
       SITE_ADDRESS: ${SITE_ADDRESS:-:80}
     volumes:
@@ -38,7 +38,15 @@ services:
       - core_db_data:/var/lib/mysql
     healthcheck:
       <<: *mysql-healthcheck
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${CORE_DB_ROOT_PASSWORD}"]
+      test:
+        [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-p${CORE_DB_ROOT_PASSWORD}',
+        ]
     networks: [core-internal]
 
   core-backend:
@@ -53,7 +61,10 @@ services:
       NODE_ENV: ${NODE_ENV}
       PORT: 3000
       FRONTEND_URL: ${FRONTEND_URL}
-      DATABASE_URL: mysql://${CORE_DB_USER}:${CORE_DB_PASSWORD}@core-db:3306/${CORE_DB_NAME}
+      DB_HOST: core-db
+      DB_NAME: ${CORE_DB_NAME}
+      DB_USER: ${CORE_DB_USER}
+      DB_PASSWORD: ${CORE_DB_PASSWORD}
       JWT_PRIVATE_KEY_PATH: ${JWT_PRIVATE_KEY_PATH}
       JWT_PUBLIC_KEY_PATH: ${JWT_PUBLIC_KEY_PATH}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
@@ -87,7 +98,15 @@ services:
       - passwords_db_data:/var/lib/mysql
     healthcheck:
       <<: *mysql-healthcheck
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${PASSWORDS_DB_ROOT_PASSWORD}"]
+      test:
+        [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-p${PASSWORDS_DB_ROOT_PASSWORD}',
+        ]
     networks: [passwords-internal]
 
   passwords-backend:
@@ -103,13 +122,17 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       PORT: 3000
-      DATABASE_URL: mysql://${PASSWORDS_DB_USER}:${PASSWORDS_DB_PASSWORD}@passwords-db:3306/${PASSWORDS_DB_NAME}
+      DB_HOST: passwords-db
+      DB_NAME: ${PASSWORDS_DB_NAME}
+      DB_USER: ${PASSWORDS_DB_USER}
+      DB_PASSWORD: ${PASSWORDS_DB_PASSWORD}
       # Contrat module <-> core
       CORE_URL: http://core-backend:3000
       MODULE_ID: passwords
       MODULE_NAME: Mots de passe
       MODULE_ICON: security
       MODULE_PATH: /passwords
+      MODULE_INTERNAL_URL: http://passwords-backend:3000
       MODULE_SECRET: ${MODULE_SECRET_PASSWORDS}
       LOGO_DEV_TOKEN: ${LOGO_DEV_TOKEN}
     networks: [edge, core-internal, passwords-internal]

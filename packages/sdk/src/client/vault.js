@@ -23,7 +23,10 @@ export async function createVault(password, answers) {
   const kek_salt = generateSalt()
   const recovery_kek_salt = generateSalt()
   const kek = await deriveKek(password, kek_salt)
-  const recoveryKek = await deriveKek(recoveryPassphrase(answers), recovery_kek_salt)
+  const recoveryKek = await deriveKek(
+    recoveryPassphrase(answers),
+    recovery_kek_salt
+  )
   return {
     encrypted_master_key: await encryptKey(masterKey, kek),
     kek_salt,
@@ -33,7 +36,10 @@ export async function createVault(password, answers) {
 }
 
 // Déchiffre la clé maître avec le mot de passe (échoue si le mot de passe est faux)
-export async function decryptMasterKeyHex(password, { kek_salt, encrypted_master_key }) {
+export async function decryptMasterKeyHex(
+  password,
+  { kek_salt, encrypted_master_key }
+) {
   try {
     const kek = await deriveKek(password, kek_salt)
     return await decryptKey(encrypted_master_key, kek)

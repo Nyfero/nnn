@@ -6,13 +6,19 @@
   "main": "./src/index.js",
   "exports": {
     ".": "./src/index.js",
-    "./server": "./src/server/index.js",
+    "./server": {
+      "types": "./src/server/index.d.ts",
+      "default": "./src/server/index.js"
+    },
     "./client": "./src/client/index.js"
   },
   "scripts": {
-    "test": "tsx test/vault.test.mjs"
+    "test": "tsx --test --test-force-exit test/*.test.mjs"
   },
   "dependencies": {
     "axios": "^1.7.9"
+  },
+  "devDependencies": {
+    "express": "^4.21.2"
   }
 }
