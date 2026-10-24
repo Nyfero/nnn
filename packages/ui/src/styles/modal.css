@@ -25,9 +25,18 @@
   margin-bottom: 1.5rem;
 }
 
-.modal-header-empty { flex: 1; }
-.modal-header-title { flex: 1; text-align: center; }
-.modal-header-actions { flex: 1; display: flex; justify-content: flex-end; }
+.modal-header-empty {
+  flex: 1;
+}
+.modal-header-title {
+  flex: 1;
+  text-align: center;
+}
+.modal-header-actions {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
 
 .modal-close {
   background: transparent;
@@ -37,7 +46,9 @@
   font-size: 1.5rem;
   display: flex;
 }
-.modal-close:hover { color: #fff; }
+.modal-close:hover {
+  color: #fff;
+}
 
 /* Footer */
 .modal-footer {
@@ -46,35 +57,10 @@
   margin-top: 0.5rem;
 }
 
-.modal-footer-left { flex: 1; }
-.modal-footer-right { display: flex; gap: 0.8rem; }
-
-/* Form */
-.modal-form { display: flex; flex-direction: column; gap: 1rem; }
-
-.form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-
-.form-wrapper {
-  position: relative;
+.modal-footer-left {
+  flex: 1;
+}
+.modal-footer-right {
   display: flex;
-  align-items: center;
-}
-
-.form-wrapper input {
-  width: 100%;
-  padding-right: 2.5rem;
-}
-
-.input-actions {
-  position: absolute;
-  right: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.form-value {
-  word-break: break-word;
-  overflow-wrap: break-word;
-  white-space: pre-wrap;
+  gap: 0.8rem;
 }

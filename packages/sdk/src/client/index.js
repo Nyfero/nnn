@@ -1,3 +1,5 @@
-// Phase 3/4 : accès à la clé maître (IndexedDB) et dérivation HKDF par module,
-// client API du core, garde de route côté module.
-export {}
+export * from './crypto.js'
+export * from './vault.js'
+export * from './keystore.js'
+export { createApi, refreshSession } from './api.js'
+export { createInactivityGuard } from './inactivity.js'

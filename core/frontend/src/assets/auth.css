@@ -1,0 +1,126 @@
+/* Styles communs aux écrans de connexion / inscription / récupération */
+
+.login-card {
+  width: 400px;
+  max-width: 92vw;
+  text-align: center;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.login-card .login-header {
+  text-align: center;
+  margin-bottom: 1.5em;
+}
+
+.login-card .login-subtitle {
+  font-size: 0.85em;
+  color: #aaa;
+  margin-top: 0.4em;
+}
+
+.login-card .login-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+}
+
+.login-card .login-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  margin-top: 1em;
+}
+
+.login-card .info-text {
+  font-size: 0.9em;
+  color: grey;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* Transition entre les étapes d'une carte */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Animation de succès / erreur */
+.login-card .svg {
+  width: 60px;
+  height: 60px;
+  display: block;
+  stroke-width: 3;
+  stroke-miterlimit: 10;
+  margin: 0 auto 20px auto;
+  border-radius: 50%;
+}
+.login-card .svg-circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: mp-stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+.login-card .svg-check,
+.login-card .svg-cross {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: mp-stroke 0.4s 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+@keyframes mp-stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Questions de sécurité */
+.login-card .question-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  padding: 1em;
+  border: 1px solid #333;
+  border-radius: 8px;
+  margin-bottom: 0.8em;
+}
+
+.login-card .question-label {
+  font-size: 0.8em;
+  font-weight: 600;
+  color: #aaa;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.login-card .form-wrapper .char-counter {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+.login-card .themed-input {
+  padding-right: 3em;
+}
+
+.login-card .themed-select {
+  width: 100%;
+  appearance: none;
+  background: var(--mp-input-bg);
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 0.6em 2em 0.6em 0.8em;
+  font-size: 0.9em;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23aaa'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.7em center;
+}
+.login-card .themed-select:focus {
+  outline: none;
+  border-color: var(--mp-accent);
+}
