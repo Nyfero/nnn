@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import prisma from '../prisma'
+import { Prisma } from '@prisma/client'
 import { TOKEN_TYPES, TTL } from '../config'
 import { ah } from '../utils/asyncHandler'
 import { hashToken, randomToken } from '../utils/jwt'
@@ -58,15 +59,25 @@ router.post(
     }
     const email = normalizeEmail(rawEmail)
 
-    const existing = await prisma.users.findFirst({
-      where: { email, is_email_verified: true },
-    })
-    if (existing)
-      return res.status(409).json({ error: 'Cet email est déjà utilisé' })
+    // L'unicité est garantie par la base (UNIQUE) : pas de course possible entre
+    // deux inscriptions simultanées, et une adresse non vérifiée reste « prise ».
+    let user
+    try {
+      user = await prisma.users.create({
+        data: { email, firstName: firstName.trim(), lastName: lastName.trim() },
+      })
+    } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === 'P2002'
+      ) {
+        return res
+          .status(409)
+          .json({ error: 'Cet email est déjà utilisé', code: 'EMAIL_TAKEN' })
+      }
+      throw e
+    }
 
-    const user = await prisma.users.create({
-      data: { email, firstName: firstName.trim(), lastName: lastName.trim() },
-    })
     const token = await issueToken(
       user.user_id,
       TOKEN_TYPES.EMAIL_VERIFICATION,
@@ -97,21 +108,13 @@ router.post(
       return res.status(400).json({ error: 'Email déjà vérifié' })
     }
 
-    await prisma.$transaction(async (tx) => {
-      await tx.users.update({
+    await prisma.$transaction([
+      prisma.users.update({
         where: { user_id: user.user_id },
         data: { is_email_verified: true },
-      })
-      await tx.tokens.delete({ where: { token_id: record.token_id } })
-      // Supprime les inscriptions non vérifiées en doublon (cascade sur leurs tokens)
-      await tx.users.deleteMany({
-        where: {
-          email: user.email,
-          is_email_verified: false,
-          user_id: { not: user.user_id },
-        },
-      })
-    })
+      }),
+      prisma.tokens.delete({ where: { token_id: record.token_id } }),
+    ])
 
     await sendRequestInscriptionToAdmin(user).catch((e) =>
       console.error('Erreur envoi email admin :', e)
@@ -197,9 +200,8 @@ router.post(
       return res.status(400).json({ error: 'Champs manquants' })
     }
 
-    const user = await prisma.users.findFirst({
+    const user = await prisma.users.findUnique({
       where: { email: normalizeEmail(email) },
-      orderBy: { is_email_verified: 'desc' },
     })
     if (!user)
       return res.status(401).json({ error: 'Email ou mot de passe incorrect' })

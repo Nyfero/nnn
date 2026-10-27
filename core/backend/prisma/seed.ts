@@ -1,7 +1,12 @@
 import 'dotenv/config'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
-import { deriveKek, encryptKey, generateMasterKey, generateSalt } from '../src/utils/crypto'
+import {
+  deriveKek,
+  encryptKey,
+  generateMasterKey,
+  generateSalt,
+} from '../src/utils/crypto'
 import { ROLES } from '../src/config'
 
 const prisma = new PrismaClient()
@@ -11,18 +16,23 @@ async function main() {
   const password = process.env.ADMIN_PASSWORD
   const firstName = process.env.ADMIN_FIRSTNAME ?? 'Admin'
   const lastName = process.env.ADMIN_LASTNAME ?? ''
-  if (!email || !password) throw new Error('ADMIN_EMAIL et ADMIN_PASSWORD requis')
+  if (!email || !password)
+    throw new Error('ADMIN_EMAIL et ADMIN_PASSWORD requis')
 
   // Rôles
   const roles: Record<string, number> = {}
   for (const role of Object.values(ROLES)) {
     roles[role] = (
-      await prisma.roles.upsert({ where: { role }, update: {}, create: { role } })
+      await prisma.roles.upsert({
+        where: { role },
+        update: {},
+        create: { role },
+      })
     ).role_id
   }
 
   // Admin initial (idempotent)
-  const existing = await prisma.users.findFirst({ where: { email, is_email_verified: true } })
+  const existing = await prisma.users.findUnique({ where: { email } })
   if (existing) {
     console.log('[seed] Admin déjà présent, rien à faire.')
     return
