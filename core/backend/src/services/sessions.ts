@@ -62,4 +62,17 @@ export async function cleanupExpired() {
   const now = new Date()
   await prisma.tokens.deleteMany({ where: { expires_at: { lt: now } } })
   await prisma.sessions.deleteMany({ where: { expires_at: { lt: now } } })
+
+  // Inscriptions jamais vérifiées : l'adresse est libérée une fois le lien expiré.
+  // Les tokens associés partent en cascade.
+  const { count } = await prisma.users.deleteMany({
+    where: {
+      is_email_verified: false,
+      created_at: { lt: new Date(now.getTime() - TTL.EMAIL_VERIFICATION_MS) },
+    },
+  })
+  if (count > 0)
+    console.log(
+      `[cleanup] ${count} inscription(s) non vérifiée(s) supprimée(s)`
+    )
 }
