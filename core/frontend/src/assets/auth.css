@@ -5,7 +5,6 @@
   max-width: 92vw;
   text-align: center;
   padding: 32px;
-  box-sizing: border-box;
 }
 
 .login-card .login-header {
@@ -100,10 +99,6 @@
   position: absolute;
   bottom: 10px;
   right: 10px;
-}
-
-.login-card .themed-input {
-  padding-right: 3em;
 }
 
 .login-card .themed-select {

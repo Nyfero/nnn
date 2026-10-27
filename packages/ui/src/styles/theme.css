@@ -12,7 +12,6 @@
 
 html,
 body {
-  background: #000;
   overflow: hidden;
   height: 100%;
   margin: 0;
@@ -64,7 +63,7 @@ body {
 
 .themed-input {
   margin: 8px 0;
-  padding: 10px;
+  padding: 10px 9px;
   width: 95%;
   border: 1px solid #eee;
   border-radius: 12px;

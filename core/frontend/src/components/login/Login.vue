@@ -25,21 +25,39 @@
                   required
                 />
                 <div class="input-actions">
-                  <button class="toggle-password" type="button" @click="showPassword = !showPassword">
-                    <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+                  <button
+                    class="toggle-password"
+                    type="button"
+                    @click="showPassword = !showPassword"
+                  >
+                    <span class="material-icons">{{
+                      showPassword ? 'visibility_off' : 'visibility'
+                    }}</span>
                   </button>
                 </div>
               </div>
-              <a class="forgot-password" href="#" @click.prevent="step = 'forgot'">
+              <a
+                class="forgot-password"
+                href="#"
+                @click.prevent="step = 'forgot'"
+              >
                 Mot de passe oublié ?
               </a>
               <p class="form-error">{{ errorMessage }}</p>
 
               <div class="login-footer">
-                <button class="themed-button button-primary" type="submit" :disabled="!isLoginValid || isLoading">
+                <button
+                  class="themed-button button-primary"
+                  type="submit"
+                  :disabled="!isLoginValid || isLoading"
+                >
                   {{ isLoading ? 'En cours...' : 'Se connecter' }}
                 </button>
-                <button class="themed-button button-secondary" type="button" @click="$emit('switch')">
+                <button
+                  class="themed-button button-secondary"
+                  type="button"
+                  @click="$emit('switch')"
+                >
                   Créer un compte
                 </button>
               </div>
@@ -49,10 +67,13 @@
 
         <!-- FORGOT -->
         <template v-else-if="step === 'forgot'">
-          <div class="login-header"><h2 class="themed-h2">Mot de passe oublié</h2></div>
+          <div class="login-header">
+            <h2 class="themed-h2">Mot de passe oublié</h2>
+          </div>
           <div class="login-body">
             <p class="info-text">
-              Entrez votre adresse email pour recevoir un lien de réinitialisation.
+              Entrez votre adresse email pour recevoir un lien de
+              réinitialisation.
             </p>
             <input
               class="themed-input"
@@ -72,16 +93,32 @@
             >
               {{ forgotLoading ? 'Envoi...' : 'Envoyer le lien' }}
             </button>
-            <button class="themed-button button-secondary" @click="step = 'login'">Retour</button>
+            <button
+              class="themed-button button-secondary"
+              @click="step = 'login'"
+            >
+              Retour
+            </button>
           </div>
         </template>
 
         <!-- EMAIL SENT -->
         <template v-else-if="step === 'email-sent'">
-          <div class="login-header"><h2 class="themed-h2">Email envoyé !</h2></div>
+          <div class="login-header">
+            <h2 class="themed-h2">Email envoyé !</h2>
+          </div>
           <div class="login-body">
-            <p>Si un compte existe pour cette adresse, un email de réinitialisation va être envoyé à :</p>
-            <a v-if="mailboxUrl" :href="mailboxUrl" target="_blank" rel="noopener" class="themed-button button-primary email-link-btn">
+            <p>
+              Si un compte existe pour cette adresse, un email de
+              réinitialisation va être envoyé à :
+            </p>
+            <a
+              v-if="mailboxUrl"
+              :href="mailboxUrl"
+              target="_blank"
+              rel="noopener"
+              class="themed-button button-primary email-link-btn"
+            >
               <span class="material-icons">open_in_new</span>
               {{ forgotEmail }}
             </a>
@@ -89,7 +126,10 @@
             <p>Pensez à vérifier vos spams.</p>
           </div>
           <div class="login-footer">
-            <button class="themed-button button-secondary" @click="step = 'login'">
+            <button
+              class="themed-button button-secondary"
+              @click="step = 'login'"
+            >
               Retour à la connexion
             </button>
           </div>
@@ -165,7 +205,8 @@ async function handleForgotPassword() {
     await api.post('/auth/password/forgot', { email: forgotEmail.value })
     step.value = 'email-sent'
   } catch (error) {
-    forgotError.value = error.response?.data?.error ?? 'Une erreur est survenue.'
+    forgotError.value =
+      error.response?.data?.error ?? 'Une erreur est survenue.'
   } finally {
     forgotLoading.value = false
   }
@@ -179,7 +220,9 @@ async function handleForgotPassword() {
   text-decoration: underline;
   cursor: pointer;
 }
-.forgot-password:hover { color: var(--mp-accent); }
+.forgot-password:hover {
+  color: var(--mp-accent);
+}
 .email-link-btn {
   color: #fff;
   text-decoration: none;

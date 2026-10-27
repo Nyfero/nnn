@@ -1,4 +1,5 @@
 <template>
+  <DustParticles />
   <AppShell
     :show-navbar="auth.isAuthenticated && route.name !== 'Login'"
     :is-admin="auth.isAdmin"
@@ -15,13 +16,15 @@ import { useRoute, useRouter } from 'vue-router'
 import { AppShell } from '@myprout/ui'
 import { createInactivityGuard } from '@myprout/sdk/client'
 import { useAuthStore } from '@/stores/authStore'
+import DustParticles from '../../../packages/ui/src/components/DustParticles.vue'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
 const active = computed(
-  () => ({ Lobby: 'home', Admin: 'admin', Profile: 'profile' })[route.name] ?? ''
+  () =>
+    ({ Lobby: 'home', Admin: 'admin', Profile: 'profile' })[route.name] ?? ''
 )
 
 // Les liens du core passent par le routeur (pas de rechargement)
