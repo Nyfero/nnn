@@ -1,7 +1,11 @@
 import 'dotenv/config'
 import express from 'express'
 import type { Request, Response, NextFunction } from 'express'
-import { coreAuth, registerModule, requireModuleSecret } from '@myprout/sdk/server'
+import {
+  coreAuth,
+  registerModule,
+  requireModuleSecret,
+} from '@myprout/sdk/server'
 import prisma from './prisma'
 import passwordRoutes from './routes/passwords'
 
@@ -32,9 +36,32 @@ app.delete(
       if (!Number.isInteger(userId) || userId <= 0) {
         return res.status(400).json({ error: 'Identifiant invalide' })
       }
-      const { count } = await prisma.passwords.deleteMany({ where: { user_id: userId } })
-      console.log(`[passwords] ${count} entrée(s) supprimée(s) pour l'utilisateur ${userId}`)
+      const { count } = await prisma.passwords.deleteMany({
+        where: { user_id: userId },
+      })
+      console.log(
+        `[passwords] ${count} entrée(s) supprimée(s) pour l'utilisateur ${userId}`
+      )
       res.json({ deleted: count })
+    } catch (err) {
+      next(err)
+    }
+  }
+)
+
+// Nombre d'entrées d'un utilisateur (vérifier la purge après suppression de compte)
+app.get(
+  `${base}/internal/users/:user_id/count`,
+  requireModuleSecret(MODULE_SECRET),
+  async (req, res, next) => {
+    try {
+      const userId = Number(req.params.user_id)
+      if (!Number.isInteger(userId) || userId <= 0) {
+        return res.status(400).json({ error: 'Identifiant invalide' })
+      }
+      res.json({
+        count: await prisma.passwords.count({ where: { user_id: userId } }),
+      })
     } catch (err) {
       next(err)
     }
@@ -44,7 +71,11 @@ app.delete(
 // Tout le reste exige un utilisateur connecté ayant accès au module (validé par le core)
 app.use(
   base,
-  coreAuth({ coreUrl: CORE_URL, moduleId: MODULE_ID, moduleSecret: MODULE_SECRET }),
+  coreAuth({
+    coreUrl: CORE_URL,
+    moduleId: MODULE_ID,
+    moduleSecret: MODULE_SECRET,
+  }),
   passwordRoutes
 )
 

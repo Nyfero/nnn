@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer'
 import { Resend } from 'resend'
+import { extractLinks } from './helper'
+import { captureMail } from '../testMailbox'
 
 const isProd = process.env.NODE_ENV === 'production'
 const sender = 'Myprout <noreply@myprout.fr>'
@@ -20,7 +22,10 @@ function getDevTransporter() {
       })
     )
     .catch((err) => {
-      console.warn('[EMAIL] Ethereal indisponible, mails affichés en console :', err.message)
+      console.warn(
+        '[EMAIL] Ethereal indisponible, mails affichés en console :',
+        err.message
+      )
       return nodemailer.createTransport({ jsonTransport: true })
     })
   return devTransporter
@@ -40,6 +45,12 @@ export async function sendEmail(
   templateId?: string,
   templateVariables?: Record<string, string | number>
 ) {
+  // Tests de bout en bout : le mail est capturé en mémoire, rien n'est envoyé
+  if (process.env.E2E_MODE === 'true') {
+    captureMail({ to, subject, links: extractLinks(html) })
+    return
+  }
+
   if (isProd && templateId) {
     const { error } = await getResend().emails.send({
       from: sender,
@@ -51,10 +62,10 @@ export async function sendEmail(
     return
   }
 
-  const info = await (await getDevTransporter()).sendMail({ from: sender, to, subject, html })
-  const links = [...html.matchAll(/href="([^"]+)"/g)]
-    .map((m) => m[1])
-    .filter((l) => l.startsWith('http'))
+  const info = await (
+    await getDevTransporter()
+  ).sendMail({ from: sender, to, subject, html })
+  const links = extractLinks(html)
   console.log(`[EMAIL DEV] → ${to} | ${subject}`)
   const preview = nodemailer.getTestMessageUrl(info)
   if (preview) console.log(`[EMAIL DEV] Aperçu : ${preview}`)

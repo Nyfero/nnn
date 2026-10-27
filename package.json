@@ -6,5 +6,10 @@
     "packages/*",
     "core/*",
     "modules/*/*"
-  ]
+  ],
+  "scripts": {
+    "test": "npm test -w packages/sdk -w core/backend",
+    "test:e2e": "node --env-file=.env --test --test-force-exit --test-concurrency=1 e2e/*.test.mjs",
+    "build": "npm run build -w core/frontend -w modules/passwords/frontend"
+  }
 }

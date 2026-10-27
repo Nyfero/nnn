@@ -40,7 +40,10 @@ export const authMiddleware = ah(
   async (req: Request, res: Response, next: NextFunction) => {
     const auth = await resolveAuth(req.headers.authorization)
     if (!auth) {
-      return res.status(401).json({ error: 'Token invalide, expiré ou révoqué' })
+      return res.status(401).json({
+        error: 'Token invalide, expiré ou révoqué',
+        code: 'TOKEN_INVALID',
+      })
     }
     req.user = {
       user_id: auth.user.user_id,

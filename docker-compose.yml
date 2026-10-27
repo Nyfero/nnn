@@ -76,6 +76,18 @@ services:
     volumes:
       - ./secrets/jwt_private.pem:/run/secrets/jwt_private.pem:ro
       - ./secrets/jwt_public.pem:/run/secrets/jwt_public.pem:ro
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/api/core/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 40s
     networks: [edge, core-internal]
 
   core-frontend:
@@ -135,6 +147,18 @@ services:
       MODULE_INTERNAL_URL: http://passwords-backend:3000
       MODULE_SECRET: ${MODULE_SECRET_PASSWORDS}
       LOGO_DEV_TOKEN: ${LOGO_DEV_TOKEN}
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/api/passwords/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 40s
     networks: [edge, core-internal, passwords-internal]
 
   passwords-frontend:

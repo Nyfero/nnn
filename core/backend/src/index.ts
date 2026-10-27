@@ -8,6 +8,7 @@ import { ROLES } from './config'
 import authRoutes from './routes/auth'
 import adminRoutes from './routes/admin'
 import moduleRoutes from './routes/modules'
+import e2eRoutes from './routes/e2e'
 import { cleanupExpired } from './services/sessions'
 
 const app = express()
@@ -22,7 +23,8 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: (origin, cb) => cb(null, !origin || allowedOrigins.includes(origin)),
+    origin: (origin, cb) =>
+      cb(null, !origin || allowedOrigins.includes(origin)),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -32,6 +34,20 @@ app.use(express.json({ limit: '100kb' }))
 app.use(cookieParser())
 
 app.get('/api/core/health', (_req, res) => res.json({ status: 'ok' }))
+// Mode tests de bout en bout : boîte mail de capture. Jamais en production.
+if (process.env.E2E_MODE === 'true') {
+  if (process.env.NODE_ENV === 'production' || !process.env.E2E_TOKEN) {
+    console.error(
+      '[core] E2E_MODE interdit en production et exige E2E_TOKEN : arrêt.'
+    )
+    process.exit(1)
+  }
+  console.warn(
+    '[core] ⚠ MODE E2E ACTIVÉ (emails capturés, rate limit désactivé)'
+  )
+  app.use('/api/core/_e2e', e2eRoutes)
+}
+
 app.use('/api/core/auth', authRoutes)
 app.use('/api/core/admin', adminRoutes)
 app.use('/api/core', moduleRoutes)

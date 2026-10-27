@@ -2,6 +2,10 @@ import type { Request, Response, NextFunction } from 'express'
 
 // Limiteur en mémoire (suffisant pour une instance unique)
 export function rateLimit(windowMs: number, max: number) {
+  if (process.env.E2E_MODE === 'true') {
+    return (_req: Request, _res: Response, next: NextFunction) => next()
+  }
+
   const hits = new Map<string, { count: number; reset: number }>()
 
   return (req: Request, res: Response, next: NextFunction) => {

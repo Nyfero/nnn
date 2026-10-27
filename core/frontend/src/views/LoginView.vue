@@ -103,7 +103,8 @@ async function goLogin() {
   pendingMasterKey.value = ''
 
   if (finishedTokenFlow) {
-    // Le lien concerne un autre compte (ou a révoqué les sessions) : on repart d'une session propre
+    // Le lien concerne un autre compte (ou a révoqué les sessions) :
+    // on ferme la session existante AVANT de retirer ?token= (sinon le routeur redirige vers le lobby)
     if (auth.isAuthenticated) await auth.logout()
     router.replace({ name: 'Login', query: {} })
   }

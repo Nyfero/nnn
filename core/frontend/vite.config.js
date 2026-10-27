@@ -3,7 +3,9 @@ import { readFileSync } from 'node:fs'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8'))
+const pkg = JSON.parse(
+  readFileSync(new URL('./package.json', import.meta.url), 'utf-8')
+)
 
 export default defineConfig({
   plugins: [vue()],
@@ -17,7 +19,7 @@ export default defineConfig({
     // En dev, le backend du core tourne sur :3000 (docker-compose.dev.yml)
     proxy: {
       '/api': {
-        target: process.env.VITE_API_TARGET ?? 'http://localhost:3000',
+        target: process.env.VITE_API_TARGET ?? 'http://127.0.0.1:3000',
         changeOrigin: true,
       },
     },

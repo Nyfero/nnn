@@ -10,7 +10,8 @@
     "seed": "tsx prisma/seed.ts",
     "reset": "tsx prisma/reset.ts",
     "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy"
+    "db:deploy": "prisma migrate deploy",
+    "test": "tsx --test --test-force-exit test/*.test.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.0.0",

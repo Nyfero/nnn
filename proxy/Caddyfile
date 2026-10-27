@@ -3,6 +3,22 @@
 {$SITE_ADDRESS::80} {
 	encode gzip
 
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy same-origin
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		# Sans effet en HTTP ; en HTTPS, le navigateur n'utilisera plus que HTTPS pendant 1 an
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+
+	# Routes réservées aux appels entre services (core <-> modules) : jamais exposées
+	@internal path_regexp ^/api/[^/]+/internal(/|$)
+	handle @internal {
+		respond 404
+	}
+
 	# ── APIs ──
 	handle /api/core/* {
 		reverse_proxy core-backend:3000

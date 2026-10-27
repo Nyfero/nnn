@@ -15,12 +15,30 @@ export async function loadEmailTemplate(templateName: string): Promise<string> {
   }
 }
 
+export const escapeHtml = (value: string) =>
+  value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+
+// Les valeurs (prénom saisi par l'utilisateur, liens...) sont échappées : aucune injection HTML possible.
+// Le remplaçant est une fonction pour que "$&" ou "$1" dans une valeur ne soient pas interprétés.
 export function replaceVariables(
   html: string,
   variables: Record<string, string | number>
 ): string {
   return Object.entries(variables).reduce(
-    (acc, [key, value]) => acc.replaceAll(`{{${key}}}`, String(value)),
+    (acc, [key, value]) =>
+      acc.replaceAll(`{{${key}}}`, () => escapeHtml(String(value))),
     html
   )
+}
+
+// Liens http(s) d'un email (dé-échappés), pour les logs de dev et les tests
+export function extractLinks(html: string): string[] {
+  return [...html.matchAll(/href="([^"]+)"/g)]
+    .map((m) => m[1].replaceAll('&amp;', '&'))
+    .filter((l) => l.startsWith('http'))
 }
