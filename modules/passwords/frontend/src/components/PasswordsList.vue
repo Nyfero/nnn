@@ -140,13 +140,13 @@ async function openModal(password = null, mode = 'create') {
   if (password) {
     editingId.value = password.password_id
 
-    const decrypted = await decryptPassword(password.password, session.moduleKey)
+    const decrypted = await decryptPassword(
+      password.password,
+      session.moduleKey
+    )
     decryptedModalPassword.value = decrypted
 
-    form.value = {
-      ...password,
-      password: mode === 'edit' ? decrypted : password.password,
-    }
+    form.value = { ...password, password: decrypted }
   } else {
     editingId.value = null
     form.value = { title: '', username: '', password: '', note: '' }

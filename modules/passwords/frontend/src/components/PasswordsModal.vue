@@ -224,7 +224,12 @@ const generatePassword = () => {
   const all = lowercase + uppercase + numbers + symbols
   const pick = (set) => set[randomIndex(set.length)]
 
-  const password = [pick(lowercase), pick(uppercase), pick(numbers), pick(symbols)]
+  const password = [
+    pick(lowercase),
+    pick(uppercase),
+    pick(numbers),
+    pick(symbols),
+  ]
   for (let i = 4; i < 16; i++) password.push(pick(all))
 
   // Mélange de Fisher-Yates
@@ -250,7 +255,7 @@ watch(
   () => props.modalMode,
   (newMode) => {
     showPassword.value = newMode !== 'view'
-    if (newMode === 'edit' && props.decryptedPassword) {
+    if (newMode === 'edit') {
       localForm.value.password = props.decryptedPassword
     }
   }
