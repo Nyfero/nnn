@@ -2,7 +2,7 @@
   <AppShell
     :is-admin="session.isAdmin"
     :active="MODULE_ID"
-    :module="session.moduleInfo && { id: MODULE_ID, ...session.moduleInfo }"
+    :modules="session.user?.modules ?? []"
   >
     <PasswordsView v-if="session.hasAccess" />
     <div v-else class="themed-card no-access">
@@ -16,7 +16,11 @@
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
 import { AppShell } from '@myprout/ui'
-import { coreLogout, createInactivityGuard, redirectToLogin } from '@myprout/sdk/client'
+import {
+  coreLogout,
+  createInactivityGuard,
+  redirectToLogin,
+} from '@myprout/sdk/client'
 import PasswordsView from '@/views/PasswordsView.vue'
 import { MODULE_ID, useSession } from '@/stores/session'
 

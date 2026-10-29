@@ -26,22 +26,29 @@ const props = defineProps({
   // 'home' | 'admin' | 'profile' | id du module courant
   active: { type: String, default: '' },
   // Dans un module : { id, name, icon, path }
-  module: { type: Object, default: null },
+  modules: { type: Array, default: () => [] },
 })
 defineEmits(['navigate'])
 
 const items = computed(() => [
   { id: 'home', href: '/', icon: 'apps', label: 'Accueil' },
-  ...(props.module
-    ? [{
-        id: props.module.id,
-        href: `${props.module.path}/`,
-        icon: props.module.icon || 'extension',
-        label: props.module.name,
-      }]
-    : []),
+  // Chaque module est une application distincte : navigation complète
+  ...props.modules.map((m) => ({
+    id: m.module_id,
+    href: `${m.path}/`,
+    icon: m.icon || 'extension',
+    label: m.name,
+    external: true,
+  })),
   ...(props.isAdmin
-    ? [{ id: 'admin', href: '/admin', icon: 'admin_panel_settings', label: 'Administration' }]
+    ? [
+        {
+          id: 'admin',
+          href: '/admin',
+          icon: 'admin_panel_settings',
+          label: 'Administration',
+        },
+      ]
     : []),
   { id: 'profile', href: '/profile', icon: 'person', label: 'Profil' },
 ])

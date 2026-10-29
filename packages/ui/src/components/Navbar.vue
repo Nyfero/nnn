@@ -40,7 +40,9 @@ defineEmits(['navigate'])
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3rem;
+  gap: 2rem;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .nav-link {
@@ -64,7 +66,9 @@ defineEmits(['navigate'])
   opacity: 0;
   max-height: 0;
   overflow: hidden;
-  transition: opacity 0.16s, max-height 0.16s;
+  transition:
+    opacity 0.16s,
+    max-height 0.16s;
   margin-top: 0.2em;
   color: #fff;
   white-space: nowrap;

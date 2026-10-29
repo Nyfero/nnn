@@ -3,6 +3,7 @@
   <AppShell
     :show-navbar="auth.isAuthenticated && route.name !== 'Login'"
     :is-admin="auth.isAdmin"
+    :modules="auth.user?.modules ?? []"
     :active="active"
     @navigate="onNavigate"
   >
@@ -27,8 +28,9 @@ const active = computed(
     ({ Lobby: 'home', Admin: 'admin', Profile: 'profile' })[route.name] ?? ''
 )
 
-// Les liens du core passent par le routeur (pas de rechargement)
+// Les liens du core passent par le routeur (pas de rechargement) ; ceux des modules, non
 function onNavigate(item, event) {
+  if (item.external) return
   event.preventDefault()
   router.push(item.href)
 }
