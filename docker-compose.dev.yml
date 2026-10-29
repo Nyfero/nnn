@@ -5,7 +5,11 @@ services:
     ports: ['127.0.0.1:3307:3306']
   passwords-db:
     ports: ['127.0.0.1:3308:3306']
+  servers-db:
+    ports: ['127.0.0.1:3309:3306']
   core-backend:
     ports: ['127.0.0.1:3000:3000']
   passwords-backend:
     ports: ['127.0.0.1:3001:3000']
+  servers-backend:
+    ports: ['127.0.0.1:3002:3000']

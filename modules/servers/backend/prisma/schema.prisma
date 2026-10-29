@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Serveurs de jeu déclarés par l'admin : un nom d'affichage + le nom du conteneur Docker.
+model servers {
+  server_id   Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  container   String   @unique @db.VarChar(128)
+  description String?  @db.VarChar(255)
+  created_at  DateTime @default(now())
+
+  permissions serverPermissions[]
+}
+
+// Un utilisateur autorisé voit le serveur ET peut l'allumer / l'éteindre.
+// user_id vient du core (pas de clé étrangère : autre base). Les admins ont accès à tout.
+model serverPermissions {
+  server_id  Int
+  user_id    Int
+  granted_at DateTime @default(now())
+  server     servers  @relation(fields: [server_id], references: [server_id], onDelete: Cascade)
+
+  @@id([server_id, user_id])
+  @@index([user_id])
+}

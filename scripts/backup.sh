@@ -25,6 +25,7 @@ dump() { # $1 = service MySQL, $2 = fichier de sortie
 echo "Sauvegarde dans $OUT"
 dump core-db "$OUT/core.sql.gz"
 dump passwords-db "$OUT/passwords.sql.gz"
+dump servers-db "$OUT/servers.sql.gz"
 # Un nouveau module = une ligne `dump <service>-db "$OUT/<service>.sql.gz"` ici
 
 cp -r secrets "$OUT/secrets"

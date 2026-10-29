@@ -73,6 +73,7 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       RESEND_API_KEY: ${RESEND_API_KEY}
       MODULE_SECRET_PASSWORDS: ${MODULE_SECRET_PASSWORDS}
+      MODULE_SECRET_SERVERS: ${MODULE_SECRET_SERVERS}
     volumes:
       - ./secrets/jwt_private.pem:/run/secrets/jwt_private.pem:ro
       - ./secrets/jwt_public.pem:/run/secrets/jwt_public.pem:ro
@@ -168,6 +169,87 @@ services:
     restart: unless-stopped
     networks: [edge]
 
+  # ───────────── Module : servers ─────────────
+  docker-proxy:
+    image: haproxy:3.0-alpine
+    restart: unless-stopped
+    user: root # nécessaire pour lire le socket Docker
+    volumes:
+      - ./modules/servers/docker-proxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks: [servers-docker]
+
+  servers-db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${SERVERS_DB_NAME}
+      MYSQL_USER: ${SERVERS_DB_USER}
+      MYSQL_PASSWORD: ${SERVERS_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${SERVERS_DB_ROOT_PASSWORD}
+    volumes:
+      - servers_db_data:/var/lib/mysql
+    healthcheck:
+      <<: *mysql-healthcheck
+      test:
+        [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-p${SERVERS_DB_ROOT_PASSWORD}',
+        ]
+    networks: [servers-internal]
+
+  servers-backend:
+    build:
+      context: .
+      dockerfile: modules/servers/backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      servers-db:
+        condition: service_healthy
+      core-backend:
+        condition: service_started
+      docker-proxy:
+        condition: service_started
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3000
+      DB_HOST: servers-db
+      DB_NAME: ${SERVERS_DB_NAME}
+      DB_USER: ${SERVERS_DB_USER}
+      DB_PASSWORD: ${SERVERS_DB_PASSWORD}
+      CORE_URL: http://core-backend:3000
+      MODULE_ID: servers
+      MODULE_NAME: Serveurs de jeu
+      MODULE_ICON: sports_esports
+      MODULE_PATH: /servers
+      MODULE_INTERNAL_URL: http://servers-backend:3000
+      MODULE_SECRET: ${MODULE_SECRET_SERVERS}
+      DOCKER_API_URL: http://docker-proxy:2375
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/api/servers/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 40s
+    networks: [edge, core-internal, servers-internal, servers-docker]
+
+  servers-frontend:
+    build:
+      context: .
+      dockerfile: modules/servers/frontend/Dockerfile
+    restart: unless-stopped
+    networks: [edge]
+
 networks:
   # Réseau exposé au proxy
   edge:
@@ -175,9 +257,12 @@ networks:
   core-internal:
   # Chaque module a son réseau privé pour sa BDD
   passwords-internal:
+  servers-internal:
+  servers-docker:
 
 volumes:
   caddy_data:
   caddy_config:
   core_db_data:
   passwords_db_data:
+  servers_db_data:

@@ -22,3 +22,8 @@ DATABASE_URL="$(db_url "$CORE_DB_ROOT_PASSWORD" 3307 "$CORE_DB_NAME")" \
 echo "→ passwords"
 DATABASE_URL="$(db_url "$PASSWORDS_DB_ROOT_PASSWORD" 3308 "$PASSWORDS_DB_NAME")" \
   npx prisma migrate dev --name "$NAME" --schema modules/passwords/backend/prisma/schema.prisma
+
+echo "→ servers"
+DATABASE_URL="$(db_url "$SERVERS_DB_ROOT_PASSWORD" 3309 "$SERVERS_DB_NAME")" \
+  npx prisma migrate dev --name "$NAME" --schema modules/servers/backend/prisma/schema.prisma
+
