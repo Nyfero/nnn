@@ -74,6 +74,7 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY}
       MODULE_SECRET_PASSWORDS: ${MODULE_SECRET_PASSWORDS}
       MODULE_SECRET_SERVERS: ${MODULE_SECRET_SERVERS}
+      MODULE_SECRET_FILES: ${MODULE_SECRET_FILES}
     volumes:
       - ./secrets/jwt_private.pem:/run/secrets/jwt_private.pem:ro
       - ./secrets/jwt_public.pem:/run/secrets/jwt_public.pem:ro
@@ -250,6 +251,82 @@ services:
     restart: unless-stopped
     networks: [edge]
 
+    # ───────────── Module : files ─────────────
+  files-db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${FILES_DB_NAME}
+      MYSQL_USER: ${FILES_DB_USER}
+      MYSQL_PASSWORD: ${FILES_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${FILES_DB_ROOT_PASSWORD}
+    volumes:
+      - files_db_data:/var/lib/mysql
+    healthcheck:
+      <<: *mysql-healthcheck
+      test:
+        [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-p${FILES_DB_ROOT_PASSWORD}',
+        ]
+    networks: [files-internal]
+
+  files-backend:
+    build:
+      context: .
+      dockerfile: modules/files/backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      files-db:
+        condition: service_healthy
+      core-backend:
+        condition: service_started
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: 3000
+      DB_HOST: files-db
+      DB_NAME: ${FILES_DB_NAME}
+      DB_USER: ${FILES_DB_USER}
+      DB_PASSWORD: ${FILES_DB_PASSWORD}
+      CORE_URL: http://core-backend:3000
+      MODULE_ID: files
+      MODULE_NAME: Fichiers
+      MODULE_ICON: folder
+      MODULE_PATH: /files
+      MODULE_INTERNAL_URL: http://files-backend:3000
+      MODULE_SECRET: ${MODULE_SECRET_FILES}
+      FILES_STORAGE_PATH: /data/files
+      FILES_DEFAULT_QUOTA: ${FILES_DEFAULT_QUOTA:-1GB}
+      FILES_TRASH_DAYS: ${FILES_TRASH_DAYS:-7}
+      FILES_MIN_FREE: ${FILES_MIN_FREE:-1GB}
+      FILES_MAX_UPLOAD: ${FILES_MAX_UPLOAD:-}
+    volumes:
+      - ${FILES_DATA_DIR:-./data/files}:/data/files
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/api/files/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 40s
+    networks: [edge, core-internal, files-internal]
+
+  files-frontend:
+    build:
+      context: .
+      dockerfile: modules/files/frontend/Dockerfile
+    restart: unless-stopped
+    networks: [edge]
+
 networks:
   # Réseau exposé au proxy
   edge:
@@ -259,6 +336,7 @@ networks:
   passwords-internal:
   servers-internal:
   servers-docker:
+  files-internal:
 
 volumes:
   caddy_data:
@@ -266,3 +344,4 @@ volumes:
   core_db_data:
   passwords_db_data:
   servers_db_data:
+  files_db_data:

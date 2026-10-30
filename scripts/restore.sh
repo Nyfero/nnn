@@ -7,13 +7,13 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 SRC="${1:?Usage: $0 backups/<date>}"
-[ -f "$SRC/core.sql.gz" ] && [ -f "$SRC/passwords.sql.gz" ] && [ -f "$SRC/servers.sql.gz" ] || { echo "Sauvegarde incomplète dans $SRC" >&2; exit 1; }
+[ -f "$SRC/core.sql.gz" ] && [ -f "$SRC/passwords.sql.gz" ] && [ -f "$SRC/servers.sql.gz" ] && [ -f "$SRC/files.sql.gz" ] || { echo "Sauvegarde incomplète dans $SRC" >&2; exit 1; }
 
 echo "⚠ Les données ACTUELLES du core et des modules vont être remplacées par celles de $SRC."
 read -r -p "Tapez RESTAURER pour continuer : " answer
 [ "$answer" = "RESTAURER" ] || { echo "Annulé."; exit 1; }
 
-docker compose stop core-backend passwords-backend servers-backend
+docker compose stop core-backend passwords-backend servers-backend files-backend
 
 restore() { # $1 = service MySQL, $2 = fichier
   gzip -dc "$2" | docker compose exec -T "$1" sh -c \
@@ -23,6 +23,7 @@ restore() { # $1 = service MySQL, $2 = fichier
 restore core-db "$SRC/core.sql.gz"
 restore passwords-db "$SRC/passwords.sql.gz"
 restore servers-db "$SRC/servers.sql.gz"
+restore files-db "$SRC/files.sql.gz"
 
 docker compose start core-backend passwords-backend
 echo "Terminé. Vérifiez : docker compose ps"

@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Arborescence de fichiers par utilisateur. Pas de clé étrangère auto-référente :
+// MySQL limite les cascades à 15 niveaux, la suppression d'un dossier est donc faite par l'application.
+model nodes {
+  node_id         Int       @id @default(autoincrement())
+  user_id         Int // identifiant du core (pas de clé étrangère : autre base)
+  parent_id       Int? // null = racine
+  name            String    @db.VarChar(1536) // clair, ou chiffré (base64url) si encrypted
+  is_folder       Boolean   @default(false)
+  size            BigInt    @default(0) // octets (taille annoncée tant que status = uploading)
+  mime            String?   @db.VarChar(191)
+  storage_backend String?   @db.VarChar(64) // nom du backend de stockage (local, archive...)
+  storage_key     String?   @db.VarChar(255) // clé du blob dans ce backend
+  status          String    @default("ready") @db.VarChar(16) // ready | uploading
+
+  // Coffres chiffrés : tout est chiffré dans le navigateur (noms et contenus). Le serveur ne voit que des blobs.
+  encrypted       Boolean   @default(false) // vrai pour un coffre et tout ce qu'il contient
+  is_vault        Boolean   @default(false) // racine d'un coffre (toujours à la racine)
+  vault_id        Int? // node_id de la racine du coffre (elle-même pour la racine)
+  name_key        String?   @db.VarChar(64) // index d'unicité du nom (HMAC) : le serveur ne connaît jamais le nom
+  wrapped_key     String?   @db.Text // secret du coffre chiffré par la clé maître de l'utilisateur (racine seulement)
+
+  // Corbeille : tous les éléments d'un dossier supprimé portent le même trashed_at, seul le dossier a trash_root
+  trashed_at      DateTime?
+  trash_root      Boolean   @default(false)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime? @updatedAt
+
+  @@index([user_id, parent_id])
+  @@index([parent_id])
+  @@index([storage_backend])
+  @@index([vault_id])
+  @@index([trash_root, trashed_at])
+}
+
+// Une ligne par utilisateur ayant utilisé le module. Sert aussi de verrou (SELECT ... FOR UPDATE)
+// pour sérialiser les opérations d'un même utilisateur (quota, noms uniques).
+model accounts {
+  user_id     Int       @id
+  quota_bytes BigInt? // null = quota par défaut, -1 = illimité
+  created_at  DateTime  @default(now())
+  updated_at  DateTime? @updatedAt
+}
+
+model settings {
+  key   String @id @db.VarChar(64)
+  value String @db.VarChar(255)
+}
