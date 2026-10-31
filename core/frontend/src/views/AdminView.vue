@@ -14,6 +14,8 @@
     <div class="admin-body">
       <PendingUsers v-if="tab === 'pending'" />
       <UsersAccess v-else-if="tab === 'users'" />
+      <UsersRoles v-else-if="tab === 'roles'" />
+      <RolesAdmin v-else-if="tab === 'rights'" />
       <ModulesAdmin v-else />
     </div>
   </div>
@@ -24,11 +26,15 @@ import { ref } from 'vue'
 import PendingUsers from '@/components/admin/PendingUsers.vue'
 import UsersAccess from '@/components/admin/UsersAccess.vue'
 import ModulesAdmin from '@/components/admin/ModulesAdmin.vue'
+import UsersRoles from '@/components/admin/UsersRoles.vue'
+import RolesAdmin from '@/components/admin/RolesAdmin.vue'
 
 const tab = ref('pending')
 const tabs = [
   { id: 'pending', label: 'Inscriptions' },
   { id: 'users', label: 'Utilisateurs' },
+  { id: 'roles', label: 'Rôles' },
+  { id: 'rights', label: 'Droits des rôles' },
   { id: 'modules', label: 'Modules' },
 ]
 </script>
@@ -54,9 +60,21 @@ const tabs = [
   padding: 0.6rem 1.2rem;
   border-bottom: 2px solid transparent;
   cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
 }
-.admin-tab:hover { color: #fff; }
-.admin-tab.active { color: var(--mp-accent); border-color: var(--mp-accent); }
-.admin-body { flex: 1; min-height: 0; overflow: auto; padding: 1rem; }
+.admin-tab:hover {
+  color: #fff;
+}
+.admin-tab.active {
+  color: var(--mp-accent);
+  border-color: var(--mp-accent);
+}
+.admin-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 1rem;
+}
 </style>

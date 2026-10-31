@@ -8,6 +8,7 @@ import {
   generateSalt,
 } from '../src/utils/crypto'
 import { ROLES } from '../src/config'
+import { ensureRoles } from '../src/services/roles'
 
 const prisma = new PrismaClient()
 
@@ -21,15 +22,10 @@ async function main() {
 
   // Rôles
   const roles: Record<string, number> = {}
-  for (const role of Object.values(ROLES)) {
-    roles[role] = (
-      await prisma.roles.upsert({
-        where: { role },
-        update: {},
-        create: { role },
-      })
-    ).role_id
-  }
+  await ensureRoles(prisma)
+  const adminRole = await prisma.roles.findUniqueOrThrow({
+    where: { role: ROLES.ADMIN },
+  })
 
   // Admin initial (idempotent)
   const existing = await prisma.users.findUnique({ where: { email } })
@@ -53,7 +49,7 @@ async function main() {
       is_email_verified: true,
       encrypted_master_key: encryptKey(masterKey, kek),
       kek_salt,
-      userRoles: { create: { role_id: roles[ROLES.ADMIN] } },
+      userRoles: { create: { role_id: adminRole.role_id } },
     },
   })
   console.log(`[seed] Admin créé : ${admin.email}`)

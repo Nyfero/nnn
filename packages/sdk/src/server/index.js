@@ -65,6 +65,8 @@ export function coreAuth({
         firstName: data.firstName,
         lastName: data.lastName,
         isAdmin: !!data.isAdmin,
+        roles: Array.isArray(data.roles) ? data.roles : [],
+        storageQuotaMb: data.storage_quota_mb ?? null, // null = illimité
       }
 
       if (cache.size > 1000) {

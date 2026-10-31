@@ -59,7 +59,6 @@ const s = {
   userId: null,
   masterHex: null,
   entryId: null,
-  autoGrantBefore: null,
   currentPassword: USER.password,
 }
 
@@ -82,11 +81,6 @@ before(() => {
 after(async () => {
   // Remet « accès auto » du module dans son état initial et supprime le compte de test s'il existe encore
   try {
-    if (s.autoGrantBefore !== null) {
-      await s.admin.patch(`/api/core/admin/modules/${MODULE}`, {
-        auto_grant: s.autoGrantBefore,
-      })
-    }
     const c = new Client('cleanup')
     for (const pw of [
       s.currentPassword,
@@ -258,16 +252,6 @@ test("8. routes admin : protégées, et le module s'est enregistré", async () =
   )
   assert.equal(mod.path, '/passwords')
 
-  // Pour tester l'attribution d'accès : on coupe « accès auto » le temps du test
-  s.autoGrantBefore = mod.auto_grant
-  if (mod.auto_grant)
-    expect(
-      await s.admin.patch(`/api/core/admin/modules/${MODULE}`, {
-        auto_grant: false,
-      }),
-      200
-    )
-
   const pending = await s.admin.get('/api/core/admin/pending-users')
   expect(pending, 200)
   const u = pending.data.find((p) => p.email === USER.email)
@@ -391,28 +375,125 @@ test('12. connexion : mauvais mot de passe refusé, bon mot de passe -> clé ma�
   expect(await s.user.get('/api/core/admin/pending-users'), 403)
 })
 
-// ═════════════════════════ 5. Accès aux modules ═════════════════════════
-test('13. sans accès : lobby vide et module fermé', async () => {
+// ═════════════════════════ 5. Rôles et accès aux modules ═════════════════════════
+test("13. un nouveau compte n'a que le rôle USER : gestionnaire de mots de passe seulement", async () => {
+  const users = await s.admin.get('/api/core/admin/users')
+  const me = users.data.find((u) => u.user_id === s.userId)
+  assert.deepEqual(me.roles, ['USER'])
   const lobby = await s.user.get('/api/core/modules')
   expect(lobby, 200)
-  assert.deepEqual(lobby.data, [])
-  const r = await s.user.get('/api/passwords/')
-  expect(r, 403, 'module refusé sans autorisation')
+  assert.deepEqual(
+    lobby.data.map((m) => m.module_id),
+    [MODULE]
+  )
 })
 
-test("14. l'admin accorde l'accès -> le module apparaît dans le lobby", async () => {
+test('14. sans rôle : accès fermé ; une exception individuelle le rétablit', async () => {
+  expect(
+    await s.admin.put(`/api/core/admin/users/${s.userId}/roles`, { roles: [] }),
+    200
+  )
+  assert.deepEqual((await s.user.get('/api/core/modules')).data, [])
+  const fresh = new Client('sans-role') // nouveau jeton : pas de cache côté module
+  expect((await fresh.login(USER.email, USER.password)).status, 200)
+  expect(await fresh.get('/api/passwords/'), 403, 'module refusé sans rôle')
+
   expect(
     await s.admin.put(`/api/core/admin/users/${s.userId}/modules`, {
       modules: [MODULE],
     }),
     200
   )
-  const lobby = await s.user.get('/api/core/modules')
   assert.deepEqual(
-    lobby.data.map((m) => m.module_id),
+    (await s.user.get('/api/core/modules')).data.map((m) => m.module_id),
     [MODULE]
   )
   expect(await s.user.get('/api/passwords/'), 200)
+
+  expect(
+    await s.admin.put(`/api/core/admin/users/${s.userId}/roles`, {
+      roles: ['USER'],
+    }),
+    200
+  )
+})
+
+test('14b. rôles : valeurs par défaut, protections, cumul et quota', async () => {
+  const list = await s.admin.get('/api/core/admin/roles')
+  expect(list, 200)
+  const by = Object.fromEntries(list.data.map((r) => [r.role, r]))
+  assert.deepEqual(Object.keys(by).sort(), [
+    'ADMIN',
+    'AMIS',
+    'FAMILLE',
+    'GAMER',
+    'USER',
+  ])
+  assert.equal(by.FAMILLE.storage_quota_mb, 2048)
+  assert.equal(by.AMIS.storage_quota_mb, 1024)
+  assert.ok(
+    by.FAMILLE.modules.includes(MODULE) &&
+      !by.FAMILLE.modules.includes('server')
+  )
+  assert.deepEqual(by.USER.modules, [MODULE])
+
+  // protections
+  expect(
+    await s.user.put(`/api/core/admin/users/${s.userId}/roles`, {
+      roles: ['ADMIN'],
+    }),
+    403,
+    'réservé aux admins'
+  )
+  expect(
+    await s.admin.put(`/api/core/admin/users/${s.userId}/roles`, {
+      roles: ['INCONNU'],
+    }),
+    400
+  )
+  expect(
+    await s.admin.patch(`/api/core/admin/roles/${by.ADMIN.role_id}`, {
+      storage_quota_mb: 1,
+    }),
+    403
+  )
+  expect(
+    await s.admin.patch(`/api/core/admin/roles/${by.AMIS.role_id}`, {
+      storage_quota_mb: -5,
+    }),
+    400
+  )
+
+  // cumul FAMILLE + AMIS : accès à passwords, quota le plus élevé
+  expect(
+    await s.admin.put(`/api/core/admin/users/${s.userId}/roles`, {
+      roles: ['FAMILLE', 'AMIS'],
+    }),
+    200
+  )
+  const c = new Client('cumul')
+  expect((await c.login(USER.email, USER.password)).status, 200)
+  const intro = await c.post(
+    '/api/core/introspect',
+    {},
+    {
+      headers: {
+        'X-Module-Id': MODULE,
+        'X-Module-Secret': process.env.MODULE_SECRET_PASSWORDS ?? '',
+      },
+    }
+  )
+  expect(intro, 200)
+  assert.equal(intro.data.storage_quota_mb, 2048)
+  assert.deepEqual([...intro.data.roles].sort(), ['AMIS', 'FAMILLE'])
+  assert.ok(intro.data.modules.includes(MODULE))
+
+  expect(
+    await s.admin.put(`/api/core/admin/users/${s.userId}/roles`, {
+      roles: ['USER'],
+    }),
+    200
+  )
 })
 
 // ═════════════════════════ 6. Module passwords ═════════════════════════

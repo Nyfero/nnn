@@ -4,7 +4,7 @@ import { ah } from '../utils/asyncHandler'
 import { isStr } from '../utils/validators'
 import { authMiddleware, resolveAuth } from '../middlewares/authMiddleware'
 import { moduleAuth } from '../middlewares/moduleAuth'
-import { accessibleModules } from '../services/access'
+import { accessibleModules, storageQuotaMb } from '../services/access'
 
 const router = Router()
 
@@ -43,7 +43,7 @@ router.post(
       last_seen_at: new Date(),
     }
 
-    // auto_grant et is_enabled sont gérés par l'admin : jamais écrasés ici
+    // is_enabled sont gérés par l'admin : jamais écrasés ici
     await prisma.modules.upsert({
       where: { module_id: id },
       create: { module_id: id, ...data },
@@ -69,7 +69,10 @@ router.post(
         code: 'TOKEN_INVALID',
       })
 
-    const modules = await accessibleModules(auth.user.user_id, auth.isAdmin)
+    const [modules, quota] = await Promise.all([
+      accessibleModules(auth.user.user_id, auth.isAdmin),
+      storageQuotaMb(auth.user.user_id, auth.isAdmin),
+    ])
     if (!modules.some((m) => m.module_id === req.moduleId)) {
       return res
         .status(403)
@@ -83,6 +86,8 @@ router.post(
       firstName: auth.user.firstName,
       lastName: auth.user.lastName,
       isAdmin: auth.isAdmin,
+      roles: auth.user.userRoles.map((ur) => ur.role.role),
+      storage_quota_mb: quota, // null = illimité
       modules: modules.map((m) => m.module_id),
     })
   })

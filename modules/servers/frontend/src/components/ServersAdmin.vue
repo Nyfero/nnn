@@ -2,7 +2,9 @@
   <div class="admin-section">
     <div class="admin-head">
       <h2 class="themed-h2">Gestion des serveurs</h2>
-      <button class="themed-button button-primary add-btn" @click="openCreate">Ajouter +</button>
+      <button class="themed-button button-primary add-btn" @click="openCreate">
+        Ajouter +
+      </button>
     </div>
 
     <p v-if="loading" class="empty">Chargement...</p>
@@ -15,14 +17,22 @@
         <div class="info">
           <span class="name">{{ s.name }}</span>
           <span class="meta mono">{{ s.container }}</span>
-          <span class="meta" :class="{ bad: s.status === 'missing' || s.error }">
-            {{ statusLabel(s) }} · {{ s.user_ids.length }} utilisateur(s) autorisé(s)
+          <span
+            class="meta"
+            :class="{ bad: s.status === 'missing' || s.error }"
+          >
+            {{ statusLabel(s) }} · {{ s.user_ids.length }} utilisateur(s)
+            autorisé(s)
           </span>
         </div>
         <button class="icon-btn" title="Modifier" @click="openEdit(s)">
           <span class="material-icons">edit</span>
         </button>
-        <button class="icon-btn danger" title="Retirer de la liste" @click="remove(s)">
+        <button
+          class="icon-btn danger"
+          title="Retirer de la liste"
+          @click="remove(s)"
+        >
           <span class="material-icons">delete</span>
         </button>
       </div>
@@ -64,7 +74,8 @@ const STATUS = {
   created: 'Hors ligne',
   missing: 'Conteneur introuvable',
 }
-const statusLabel = (s) => (s.error ? 'Indisponible' : (STATUS[s.status] ?? s.status))
+const statusLabel = (s) =>
+  s.error ? 'Indisponible' : (STATUS[s.status] ?? s.status)
 
 async function load() {
   try {
@@ -78,9 +89,12 @@ async function load() {
 onMounted(async () => {
   await load()
   try {
-    // Seuls les utilisateurs (non-admin) ayant accès au module peuvent recevoir une permission
+    // Seuls les utilisateurs (non-admin) ayant accès au module peuvent recevoir une permission.
+    // effective_modules = modules des rôles ∪ exceptions individuelles (calculé par le core)
     const { data } = await coreApi.get('/admin/users')
-    users.value = data.filter((u) => !u.isAdmin && u.modules.includes(MODULE_ID))
+    users.value = data.filter(
+      (u) => !u.isAdmin && u.effective_modules.includes(MODULE_ID)
+    )
   } catch {
     error.value ||= 'Impossible de charger la liste des utilisateurs'
   }
@@ -103,7 +117,8 @@ async function save(payload) {
   formLoading.value = true
   formError.value = ''
   try {
-    if (editing.value) await api.put(`/admin/${editing.value.server_id}`, payload)
+    if (editing.value)
+      await api.put(`/admin/${editing.value.server_id}`, payload)
     else await api.post('/admin', payload)
     showModal.value = false
     await load()
@@ -115,7 +130,12 @@ async function save(payload) {
 }
 
 async function remove(server) {
-  if (!confirm(`Retirer « ${server.name} » de la liste ? Le conteneur Docker n'est pas touché.`)) return
+  if (
+    !confirm(
+      `Retirer « ${server.name} » de la liste ? Le conteneur Docker n'est pas touché.`
+    )
+  )
+    return
   try {
     await api.delete(`/admin/${server.server_id}`)
     await load()
@@ -126,11 +146,30 @@ async function remove(server) {
 </script>
 
 <style scoped>
-.admin-section { max-width: 800px; margin: 0 auto; }
-.admin-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
-.add-btn { width: auto; padding: 10px 20px; }
-.empty { color: #aaa; text-align: center; margin-top: 3rem; }
-.rows { display: flex; flex-direction: column; gap: 1rem; }
+.admin-section {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.admin-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.add-btn {
+  width: auto;
+  padding: 10px 20px;
+}
+.empty {
+  color: #aaa;
+  text-align: center;
+  margin-top: 3rem;
+}
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 .row {
   display: flex;
   align-items: center;
@@ -140,11 +179,27 @@ async function remove(server) {
   background: #1e1e2e;
   border: 1px solid #2e2e3e;
 }
-.info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.2rem; }
-.name { font-weight: 600; font-size: 1.05rem; }
-.meta { color: #888; font-size: 0.8rem; }
-.meta.bad { color: #ff5555; }
-.mono { font-family: monospace; }
+.info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.name {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+.meta {
+  color: #888;
+  font-size: 0.8rem;
+}
+.meta.bad {
+  color: #ff5555;
+}
+.mono {
+  font-family: monospace;
+}
 .icon-btn {
   background: transparent;
   border: 1px solid #444;
@@ -155,6 +210,12 @@ async function remove(server) {
   display: flex;
   transition: all 0.2s;
 }
-.icon-btn:hover { border-color: var(--mp-accent); color: var(--mp-accent); }
-.icon-btn.danger:hover { border-color: #ff5555; color: #ff5555; }
+.icon-btn:hover {
+  border-color: var(--mp-accent);
+  color: var(--mp-accent);
+}
+.icon-btn.danger:hover {
+  border-color: #ff5555;
+  color: #ff5555;
+}
 </style>

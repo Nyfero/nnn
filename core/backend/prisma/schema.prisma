@@ -63,9 +63,26 @@ model sessions {
 }
 
 model roles {
-  role_id   Int         @id @default(autoincrement())
-  role      String      @unique @db.VarChar(64) // ADMIN | USER
-  userRoles userRoles[]
+  role_id          Int           @id @default(autoincrement())
+  role             String        @unique @db.VarChar(64) // ADMIN | USER | FAMILLE | GAMER | AMIS
+  description      String?       @db.VarChar(191)
+  // true : accès à tous les modules sauf ceux de roleModules (exclusions)
+  // false : accès uniquement aux modules de roleModules
+  all_modules      Boolean       @default(false)
+  storage_quota_mb Int? // null = illimité
+  // false tant que les valeurs par défaut (config.ts) n'ont pas été appliquées une fois
+  initialized      Boolean       @default(false)
+  userRoles        userRoles[]
+  roleModules      roleModules[]
+}
+
+// Pas de clé étrangère sur module_id : permet d'exclure un module pas encore enregistré
+model roleModules {
+  role_id   Int
+  module_id String @db.VarChar(64)
+  role      roles  @relation(fields: [role_id], references: [role_id], onDelete: Cascade)
+
+  @@id([role_id, module_id])
 }
 
 model userRoles {

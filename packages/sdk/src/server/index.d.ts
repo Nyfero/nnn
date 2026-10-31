@@ -6,6 +6,8 @@ export interface CoreUser {
   firstName: string
   lastName: string
   isAdmin: boolean
+  roles: string[]
+  storageQuotaMb: number | null
 }
 
 export function coreAuth(options: {

@@ -34,6 +34,16 @@
 - Après login : importée dans IndexedDB en `CryptoKey` HKDF non extractable, supprimée au logout/inactivité.
 - Changement de mot de passe ou reset : seul le blob du core est rechiffré.
 
+## Rôles et accès
+
+Accès d'un utilisateur = modules de ses rôles (cumulables) ∪ exceptions individuelles (`userModules`).
+Les admins ont accès à tout. Un rôle `all_modules` donne accès à tous les modules sauf ceux de `roleModules`
+(exclusions) ; sinon `roleModules` liste les modules autorisés.
+Quota de stockage : `roles.storage_quota_mb` (null = illimité), le plus élevé des rôles de l'utilisateur,
+exposé aux modules par `/introspect` (`storage_quota_mb`, `roles`) et par le SDK (`req.user.storageQuotaMb`).
+Défauts (`config.ts`, appliqués une fois) : ADMIN, USER (passwords), FAMILLE (tout sauf `server`, 2 Go),
+GAMER (`server`), AMIS (tout sauf `server`, 1 Go).
+
 ## Background partagé
 
 `DustParticles` vit dans `@myprout/ui`. Le core et chaque module le montent dans leur `App.vue`,
@@ -53,6 +63,10 @@ l'animation redémarre au changement d'application (positions aléatoires : l'ef
 | `POST /modules/register`                                                                                     | module               | auto-enregistrement                                                |
 | `POST /introspect`                                                                                           | module + Bearer user | validation du token et de l'accès au module                        |
 | `/admin/*`                                                                                                   | admin                | inscriptions, utilisateurs, accès par module, modules              |
+| `GET /admin/roles`                                                                                           | admin                | droits et quota des rôles                                          |
+| `PATCH /admin/roles/:id`                                                                                     | admin                | droits et quota des rôles                                          |
+| `PUT /admin/roles/:id/modules`                                                                               | admin                | droits et quota des rôles                                          |
+| `PUT /admin/users/:id/roles`                                                                                 | admin                | attribution des rôles                                              |
 
 Un module expose `DELETE /api/<id>/internal/users/:user_id` (header `X-Module-Secret`) pour purger les données d'un utilisateur supprimé.
 

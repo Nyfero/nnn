@@ -4,12 +4,12 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import type { Request, Response, NextFunction } from 'express'
 import prisma from './prisma'
-import { ROLES } from './config'
 import authRoutes from './routes/auth'
 import adminRoutes from './routes/admin'
 import moduleRoutes from './routes/modules'
 import e2eRoutes from './routes/e2e'
 import { cleanupExpired } from './services/sessions'
+import { ensureRoles } from './services/roles'
 
 const app = express()
 app.set('trust proxy', 1) // derrière Caddy : req.ip fiable pour le rate limit
@@ -58,10 +58,7 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
 })
 
 async function main() {
-  // Les rôles sont référencés par leur nom, jamais par un id codé en dur
-  for (const role of Object.values(ROLES)) {
-    await prisma.roles.upsert({ where: { role }, update: {}, create: { role } })
-  }
+  await ensureRoles()
 
   setInterval(() => cleanupExpired().catch(console.error), 60 * 60 * 1000)
   await cleanupExpired()

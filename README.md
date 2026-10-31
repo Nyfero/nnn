@@ -69,8 +69,8 @@ docker compose up -d --build     # http://localhost  ->  lobby -> "Mots de passe
 ```
 
 Le module s'enregistre seul auprès du core au démarrage (il apparaît alors dans le lobby
-et dans l'onglet Admin > Modules). Il faut ensuite lui donner accès :
-Admin > Modules > « Accès auto » (nouveaux comptes) ou Admin > Utilisateurs (compte par compte).
+et dans l'onglet Admin > Modules). Un nouveau compte reçoit le rôle USER (accès aux mots de passe).
+Admin > Rôles pour en ajouter, Admin > Droits des rôles pour régler les modules et quotas.
 Les admins ont accès à tous les modules.
 
 ## Phase 5 : tests, durcissement, déploiement

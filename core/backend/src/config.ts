@@ -1,4 +1,53 @@
-export const ROLES = { ADMIN: 'ADMIN', USER: 'USER' } as const
+export const ROLES = {
+  ADMIN: 'ADMIN',
+  USER: 'USER',
+  FAMILLE: 'FAMILLE',
+  GAMER: 'GAMER',
+  AMIS: 'AMIS',
+} as const
+
+// Valeurs appliquées une seule fois par rôle (ensuite c'est l'admin qui décide).
+// modules : autorisés si all_modules = false, exclus si all_modules = true.
+export const ROLE_DEFAULTS: Record<
+  string,
+  {
+    description: string
+    all_modules: boolean
+    modules: string[]
+    storage_quota_mb: number | null
+  }
+> = {
+  [ROLES.ADMIN]: {
+    description: 'Tous les droits',
+    all_modules: true,
+    modules: [],
+    storage_quota_mb: null,
+  },
+  [ROLES.USER]: {
+    description: 'Gestionnaire de mots de passe',
+    all_modules: false,
+    modules: ['passwords'],
+    storage_quota_mb: 0,
+  },
+  [ROLES.FAMILLE]: {
+    description: 'Tous les modules sauf le serveur',
+    all_modules: true,
+    modules: ['servers'],
+    storage_quota_mb: 2 * 1024, // 2 Go
+  },
+  [ROLES.GAMER]: {
+    description: 'Module serveur',
+    all_modules: false,
+    modules: ['servers'],
+    storage_quota_mb: 0,
+  },
+  [ROLES.AMIS]: {
+    description: 'Comme la famille, avec moins de stockage',
+    all_modules: true,
+    modules: ['servers'],
+    storage_quota_mb: 1024, // 1 Go
+  },
+}
 
 export const TOKEN_TYPES = {
   EMAIL_VERIFICATION: 'email_verification',
