@@ -433,7 +433,7 @@ test('14b. rôles : valeurs par défaut, protections, cumul et quota', async () 
   assert.equal(by.AMIS.storage_quota_mb, 1024)
   assert.ok(
     by.FAMILLE.modules.includes(MODULE) &&
-      !by.FAMILLE.modules.includes('server')
+      !by.FAMILLE.modules.includes('servers')
   )
   assert.deepEqual(by.USER.modules, [MODULE])
 

@@ -6,6 +6,8 @@ export const ROLES = {
   AMIS: 'AMIS',
 } as const
 
+export const SERVER_MODULE_ID = 'servers'
+
 // Valeurs appliquées une seule fois par rôle (ensuite c'est l'admin qui décide).
 // modules : autorisés si all_modules = false, exclus si all_modules = true.
 export const ROLE_DEFAULTS: Record<
@@ -32,19 +34,19 @@ export const ROLE_DEFAULTS: Record<
   [ROLES.FAMILLE]: {
     description: 'Tous les modules sauf le serveur',
     all_modules: true,
-    modules: ['servers'],
+    modules: [SERVER_MODULE_ID],
     storage_quota_mb: 2 * 1024, // 2 Go
   },
   [ROLES.GAMER]: {
     description: 'Module serveur',
     all_modules: false,
-    modules: ['servers'],
+    modules: [SERVER_MODULE_ID],
     storage_quota_mb: 0,
   },
   [ROLES.AMIS]: {
     description: 'Comme la famille, avec moins de stockage',
     all_modules: true,
-    modules: ['servers'],
+    modules: [SERVER_MODULE_ID],
     storage_quota_mb: 1024, // 1 Go
   },
 }
