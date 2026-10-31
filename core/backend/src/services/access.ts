@@ -62,18 +62,6 @@ export async function storageQuotaMb(
   return Math.max(...roles.map((r) => r.storage_quota_mb as number))
 }
 
-export async function grantAutoModules(userId: number) {
-  const auto = await prisma.modules.findMany({
-    where: { auto_grant: true },
-    select: { module_id: true },
-  })
-  if (auto.length === 0) return
-  await prisma.userModules.createMany({
-    data: auto.map((m) => ({ user_id: userId, module_id: m.module_id })),
-    skipDuplicates: true,
-  })
-}
-
 export function getModuleSecret(moduleId: string): string | undefined {
   return process.env[
     `MODULE_SECRET_${moduleId.toUpperCase().replace(/-/g, '_')}`

@@ -103,7 +103,6 @@ model modules {
   internal_url  String? // ex: http://passwords-backend:3000 (appels core -> module)
   version       String?
   is_enabled    Boolean  @default(true)
-  auto_grant    Boolean  @default(false) // accès donné automatiquement aux nouveaux comptes
   registered_at DateTime @default(now())
   last_seen_at  DateTime @default(now())
 
