@@ -34,6 +34,9 @@
 			flush_interval -1
 		}
 	}
+	handle /api/vpn/* {
+		reverse_proxy vpn-backend:3000
+	}
 
 
 	# ── Frontends des modules (un bloc par module) ──
@@ -50,6 +53,11 @@
 	@files path /files /files/*
 	handle @files {
 		reverse_proxy files-frontend:80
+	}
+
+	@vpn path /vpn /vpn/*
+	handle @vpn {
+		reverse_proxy vpn-frontend:80
 	}
 
 	# ── Core frontend (lobby, login, profil, admin) : par défaut ──

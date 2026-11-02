@@ -30,3 +30,7 @@ DATABASE_URL="$(db_url "$SERVERS_DB_ROOT_PASSWORD" 3309 "$SERVERS_DB_NAME")" \
 echo "→ files"
 DATABASE_URL="$(db_url "$FILES_DB_ROOT_PASSWORD" 3310 "$FILES_DB_NAME")" \
   npx prisma migrate dev --name "$NAME" --schema modules/files/backend/prisma/schema.prisma
+
+echo "→ vpn"
+DATABASE_URL="$(db_url "$VPN_DB_ROOT_PASSWORD" 3311 "$VPN_DB_NAME")" \
+  npx prisma migrate dev --name "$NAME" --schema modules/vpn/backend/prisma/schema.prisma

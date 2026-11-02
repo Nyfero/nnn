@@ -4,7 +4,11 @@ import { ah } from '../utils/asyncHandler'
 import { isStr } from '../utils/validators'
 import { authMiddleware, resolveAuth } from '../middlewares/authMiddleware'
 import { moduleAuth } from '../middlewares/moduleAuth'
-import { accessibleModules, storageQuotaMb } from '../services/access'
+import {
+  accessibleModules,
+  storageQuotaMb,
+  usersWithModuleAccess,
+} from '../services/access'
 
 const router = Router()
 
@@ -14,6 +18,22 @@ router.get(
   authMiddleware,
   ah(async (req, res) => {
     res.json(await accessibleModules(req.user!.user_id, req.user!.isAdmin))
+  })
+)
+
+// ─── Un module demande qui est admin ou détient certains rôles (réconciliation) ──
+// Headers : X-Module-Id, X-Module-Secret.  Query : roles=FAMILLE,AMIS
+router.get(
+  '/modules/access',
+  moduleAuth,
+  ah(async (req, res) => {
+    const roles = String(req.query.roles ?? '')
+      .split(',')
+      .filter((r) => /^[A-Z_]{1,64}$/.test(r))
+    const user_ids = await usersWithModuleAccess(req.moduleId!, roles)
+    if (!user_ids)
+      return res.status(404).json({ error: 'Module non enregistré' })
+    res.json({ user_ids })
   })
 )
 

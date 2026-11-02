@@ -7,6 +7,7 @@ export const ROLES = {
 } as const
 
 export const SERVER_MODULE_ID = 'servers'
+export const VPN_MODULE_ID = 'vpn'
 
 // Valeurs appliquées une seule fois par rôle (ensuite c'est l'admin qui décide).
 // modules : autorisés si all_modules = false, exclus si all_modules = true.
@@ -46,7 +47,7 @@ export const ROLE_DEFAULTS: Record<
   [ROLES.AMIS]: {
     description: 'Comme la famille, avec moins de stockage',
     all_modules: true,
-    modules: [SERVER_MODULE_ID],
+    modules: [SERVER_MODULE_ID, VPN_MODULE_ID],
     storage_quota_mb: 1024, // 1 Go
   },
 }

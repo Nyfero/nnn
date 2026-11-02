@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Un appareil = un "peer" WireGuard. Le serveur ne connaît que la clé PUBLIQUE :
+// la clé privée est générée dans le navigateur et ne le quitte jamais.
+model devices {
+  device_id        Int      @id @default(autoincrement())
+  user_id          Int // identifiant du core (pas de clé étrangère : autre base)
+  name             String   @db.VarChar(64)
+  public_key       String   @unique @db.VarChar(44)
+  ip_index         Int      @unique // dernier octet de l'IP dans le VPN (2 à 254)
+  encrypted_config String?  @db.Text // configuration complète, chiffrée côté client (AES-GCM, clé du module)
+  is_enabled       Boolean  @default(true) // false : l'utilisateur n'a plus le droit d'utiliser le VPN
+  created_at       DateTime @default(now())
+
+  @@index([user_id])
+}

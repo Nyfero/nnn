@@ -47,6 +47,32 @@ export async function accessibleModules(userId: number, isAdmin: boolean) {
   return enabled.filter((m) => allowed.has(m.module_id))
 }
 
+// Utilisateurs actifs ayant accès à un module ET (admin ou détenteur d'un des rôles donnés).
+// Utilisé par les modules qui réservent une fonction sensible à certains rôles (ex. VPN) pour
+// suspendre ce qui appartient à ceux qui ont perdu leurs droits.
+// null = module inconnu (pas encore enregistré) : l'appelant ne doit rien en conclure.
+export async function usersWithModuleAccess(
+  moduleId: string,
+  roles: string[]
+): Promise<number[] | null> {
+  if (!(await prisma.modules.findUnique({ where: { module_id: moduleId } }))) {
+    return null
+  }
+  const users = await prisma.users.findMany({
+    where: {
+      is_active: true,
+      userRoles: { some: { role: { role: { in: [ROLES.ADMIN, ...roles] } } } },
+    },
+    include: { userRoles: { include: { role: true } } },
+  })
+  const ids: number[] = []
+  for (const u of users) {
+    const modules = await accessibleModules(u.user_id, hasAdminRole(u))
+    if (modules.some((m) => m.module_id === moduleId)) ids.push(u.user_id)
+  }
+  return ids
+}
+
 // Quota de stockage en Mo : null = illimité. Cumul de rôles : le plus élevé gagne.
 export async function storageQuotaMb(
   userId: number,
