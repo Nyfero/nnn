@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Restaure les bases depuis une sauvegarde créée par backup.sh.
 # Usage : ./scripts/restore.sh backups/2026-01-31_030000
-# Les bases (core-db, passwords-db) doivent tourner ; les tables existantes sont remplacées.
+# Les bases (core-db, passwords-db, servers-db, files-db) doivent tourner ; les tables existantes sont remplacées.
 # Les secrets et le .env ne sont PAS écrasés : copiez-les à la main depuis la sauvegarde si besoin.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -13,7 +13,11 @@ echo "⚠ Les données ACTUELLES du core et des modules vont être remplacées p
 read -r -p "Tapez RESTAURER pour continuer : " answer
 [ "$answer" = "RESTAURER" ] || { echo "Annulé."; exit 1; }
 
-docker compose stop core-backend passwords-backend servers-backend files-backend
+# Backends arrêtés pendant la restauration, puis tous redémarrés à la fin.
+# Un nouveau module = son <id>-backend ici (comme sa ligne dans backup.sh).
+BACKENDS="core-backend passwords-backend servers-backend files-backend"
+
+docker compose stop $BACKENDS
 
 restore() { # $1 = service MySQL, $2 = fichier
   gzip -dc "$2" | docker compose exec -T "$1" sh -c \
@@ -25,5 +29,5 @@ restore passwords-db "$SRC/passwords.sql.gz"
 restore servers-db "$SRC/servers.sql.gz"
 restore files-db "$SRC/files.sql.gz"
 
-docker compose start core-backend passwords-backend
+docker compose start $BACKENDS
 echo "Terminé. Vérifiez : docker compose ps"
