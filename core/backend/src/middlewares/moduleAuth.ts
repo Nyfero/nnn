@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express'
-import { getModuleSecret } from '../services/access'
+import { getModuleSecret } from '../utils/moduleSecret'
 import { safeEqual } from '../utils/jwt'
 
 export const moduleAuth = (req: Request, res: Response, next: NextFunction) => {

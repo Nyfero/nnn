@@ -8,7 +8,7 @@
     "modules/*/*"
   ],
   "scripts": {
-    "test": "npm test -w packages/sdk -w core/backend -w modules/files/backend -w modules/files/frontend",
+    "test": "npm test -w packages/sdk -w core/backend -w modules/passwords/backend -w modules/passwords/frontend -w modules/servers/backend -w modules/servers/frontend -w modules/files/backend -w modules/files/frontend",
     "test:e2e": "node --env-file=.env --test --test-force-exit --test-concurrency=1 e2e/*.test.mjs",
     "build": "npm run build -w core/frontend -w modules/passwords/frontend -w modules/servers/frontend -w modules/files/frontend"
   }

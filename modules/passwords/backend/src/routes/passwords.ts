@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import type { Request, Response, NextFunction, RequestHandler } from 'express'
 import prisma from '../prisma'
+import { DOMAIN, parseBody, parseId } from '../utils/validation'
 
 const router = Router()
 
@@ -10,28 +11,6 @@ const ah =
   (req, res, next) => {
     fn(req, res, next).catch(next)
   }
-
-const parseId = (v: string | undefined) => {
-  const n = Number(v)
-  return Number.isInteger(n) && n > 0 ? n : null
-}
-
-const optStr = (v: unknown, max: number) =>
-  typeof v === 'string' && v.length <= max ? v : v == null ? null : undefined
-
-// Le mot de passe arrive déjà chiffré par le navigateur : le serveur ne le voit jamais en clair
-function parseBody(body: any) {
-  const title = typeof body?.title === 'string' ? body.title.trim() : ''
-  const password = typeof body?.password === 'string' ? body.password : ''
-  const username = optStr(body?.username, 191)
-  const note = optStr(body?.note, 2000)
-
-  if (!title || title.length > 191) return null
-  if (!password || password.length > 8192) return null
-  if (username === undefined || note === undefined) return null
-
-  return { title, username, password, note }
-}
 
 router.get('/', ah(async (req, res) => {
   res.json(
@@ -95,8 +74,6 @@ router.patch('/:id/is_stared', ah(async (req, res) => {
 }))
 
 // Logo d'un site (proxy logo.dev : le token reste côté serveur, réservé aux utilisateurs connectés)
-const DOMAIN = /^(?=.{4,253}$)([a-z0-9-]+\.)+[a-z]{2,}$/
-
 router.get('/logo', ah(async (req, res) => {
   const domain = String(req.query.domain ?? '').toLowerCase()
   if (!DOMAIN.test(domain) || !process.env.LOGO_DEV_TOKEN) return res.status(404).end()

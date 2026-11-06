@@ -7,11 +7,19 @@
 | Bout en bout | `npm run test:e2e` | stack lancée en mode E2E | parcours complet sur la vraie pile (Caddy, core, module, bases) |
 
 ## Tests unitaires (`npm test`)
-Aucune base ni Docker requis.
+Aucune base ni Docker requis. `npm test` lance les tests de chaque workspace ; pour un seul : `npm test -w modules/passwords/backend`.
+Chaque module a ses tests (backend en `test/*.test.ts` via `tsx`, frontend en `test/*.test.mjs` pour la logique JS pure). La logique testable vit dans des fichiers sans Prisma ni Vue (`src/utils/`), les routes et composants ne font que l'assembler. Voir le skill `module-tests` (`.claude/skills/`).
 
 - `packages/sdk/test/vault.test.mjs` : une clé maître chiffrée côté navigateur est lisible côté serveur et inversement (le seed admin) ; changement de mot de passe, récupération par réponses, dérivation HKDF par module.
 - `packages/sdk/test/server.test.mjs` : `coreAuth` (accepté, refusé, 403, cache, core injoignable), `registerModule`, `requireModuleSecret`, contre un faux core.
-- `core/backend/test/units.test.ts` : formats des blobs et sels, 3 questions exactement, normalisation des réponses identique client/serveur, échappement HTML des emails, rate limit, signature JWT (falsification, mauvaise clé, algorithme `none`), jetons opaques.
+- `core/backend/test/` :
+  - `validators.test.ts` : formats des blobs et sels, 3 questions exactement, normalisation des réponses identique client/serveur, cohérence des durées de vie.
+  - `crypto-jwt.test.ts` : signature JWT (falsification, mauvaise clé, algorithmes `none`, HS256 et RS384 refusés, expiration), jetons opaques, KEK et blob de clé maître au même format que le client.
+  - `access.test.ts` : accès aux modules par rôles (liste blanche, « tous sauf », exceptions individuelles, cumul), quotas, rôles par défaut, authentification module -> core (`moduleAuth`).
+  - `rateLimit-email.test.ts` : rate limit, échappement HTML des emails, variables des modèles d'email.
+- `modules/passwords/` : backend `validation.test.ts` (corps des requêtes, domaine des logos, pas d'injection de `user_id`) ; frontend `crypto.test.mjs` (AES-GCM : IV aléatoire, mauvaise clé, chiffré modifié) et `passwordsList.test.mjs` (filtre, regroupement, domaines).
+- `modules/servers/` : backend `docker.test.ts` (client Docker contre un faux proxy local : conteneurs Myprout protégés, délai d'arrêt, Docker injoignable), `validation.test.ts`, `access.test.ts` (visibilité par utilisateur, admin requis) ; frontend `serverState.test.mjs` (états affichés, durée de fonctionnement).
+- `modules/files/` : backend `units.test.ts`, frontend `vault.test.mjs`.
 
 ## Tests de bout en bout (`npm run test:e2e`)
 26 étapes enchaînées sur la vraie pile :

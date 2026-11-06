@@ -2,12 +2,9 @@ import { Router } from 'express'
 import prisma from '../prisma'
 import { ah, parseId } from '../utils/http'
 import { act, isAction, serverView } from '../docker'
+import { visibleTo } from '../utils/access'
 
 const router = Router()
-
-// Admin : tous les serveurs. Utilisateur : ceux pour lesquels l'admin lui a donné la permission.
-const visibleTo = (user: { user_id: number; isAdmin: boolean }) =>
-  user.isAdmin ? {} : { permissions: { some: { user_id: user.user_id } } }
 
 router.get(
   '/',

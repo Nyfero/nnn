@@ -1,9 +1,13 @@
 import prisma from '../prisma'
-import { ROLES } from '../config'
+import {
+  filterAccessibleModules,
+  hasAdminRole,
+  pickStorageQuota,
+} from '../utils/accessRules'
+import { getModuleSecret } from '../utils/moduleSecret'
 
-export const hasAdminRole = (user: {
-  userRoles: { role: { role: string } }[]
-}) => user.userRoles.some((ur) => ur.role.role === ROLES.ADMIN)
+// Ré-exportés : d'autres fichiers les importent depuis ce module
+export { hasAdminRole, getModuleSecret }
 
 // Modules utilisables = (modules des rôles) ∪ (exceptions individuelles userModules),
 // restreints aux modules activés. Les admins ont accès à tous les modules activés.
@@ -32,19 +36,11 @@ export async function accessibleModules(userId: number, isAdmin: boolean) {
     }),
   ])
 
-  const allowed = new Set(direct.map((d) => d.module_id))
-  for (const role of roles) {
-    const listed = new Set(role.roleModules.map((m) => m.module_id))
-    for (const m of enabled) {
-      // all_modules : la liste contient les exclusions ; sinon, les modules autorisés
-      if (
-        role.all_modules ? !listed.has(m.module_id) : listed.has(m.module_id)
-      ) {
-        allowed.add(m.module_id)
-      }
-    }
-  }
-  return enabled.filter((m) => allowed.has(m.module_id))
+  return filterAccessibleModules(
+    enabled,
+    roles,
+    direct.map((d) => d.module_id)
+  )
 }
 
 // Quota de stockage en Mo : null = illimité. Cumul de rôles : le plus élevé gagne.
@@ -57,15 +53,7 @@ export async function storageQuotaMb(
     where: { userRoles: { some: { user_id: userId } } },
     select: { storage_quota_mb: true },
   })
-  if (roles.length === 0) return 0
-  if (roles.some((r) => r.storage_quota_mb === null)) return null
-  return Math.max(...roles.map((r) => r.storage_quota_mb as number))
-}
-
-export function getModuleSecret(moduleId: string): string | undefined {
-  return process.env[
-    `MODULE_SECRET_${moduleId.toUpperCase().replace(/-/g, '_')}`
-  ]
+  return pickStorageQuota(roles)
 }
 
 // Prévient les modules qu'un utilisateur a été supprimé (ils purgent leurs données)

@@ -39,6 +39,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { isDisabled, isSwitchOn, stateView, uptimeLabel } from '@/utils/serverState'
 
 const props = defineProps({
   server: { type: Object, required: true },
@@ -47,46 +48,10 @@ const props = defineProps({
 })
 defineEmits(['toggle', 'restart'])
 
-const BUSY_LABELS = { start: 'Démarrage…', stop: 'Arrêt…', restart: 'Redémarrage…' }
-
-const view = computed(() => {
-  if (props.busy) return { label: BUSY_LABELS[props.busy], cls: 'pending' }
-  const s = props.server
-  if (s.error) return { label: 'Indisponible', cls: 'error' }
-  switch (s.status) {
-    case 'running':
-      if (s.health === 'starting') return { label: 'Démarrage…', cls: 'pending' }
-      if (s.health === 'unhealthy') return { label: 'En ligne (instable)', cls: 'warn' }
-      return { label: 'En ligne', cls: 'on' }
-    case 'restarting':
-      return { label: 'Redémarrage…', cls: 'pending' }
-    case 'paused':
-      return { label: 'En pause', cls: 'warn' }
-    case 'missing':
-      return { label: 'Conteneur introuvable', cls: 'error' }
-    case 'unknown':
-      return { label: 'Indisponible', cls: 'error' }
-    default:
-      return { label: 'Hors ligne', cls: 'off' }
-  }
-})
-
-// Position du bouton : suit l'action en cours, sinon l'état réel
-const isOn = computed(() => (props.busy ? props.busy !== 'stop' : props.server.running))
-
-const disabled = computed(
-  () => !!props.busy || !!props.server.error || props.server.status === 'missing' || props.server.protected
-)
-
-const uptime = computed(() => {
-  const s = props.server
-  if (props.busy || !s.running || !s.startedAt) return ''
-  const sec = Math.max(0, Math.floor((props.now - Date.parse(s.startedAt)) / 1000))
-  const d = Math.floor(sec / 86400)
-  const h = Math.floor((sec % 86400) / 3600)
-  const m = Math.floor((sec % 3600) / 60)
-  return `depuis ${d ? d + ' j ' : ''}${d || h ? h + ' h ' : ''}${m} min`
-})
+const view = computed(() => stateView(props.server, props.busy))
+const isOn = computed(() => isSwitchOn(props.server, props.busy))
+const disabled = computed(() => isDisabled(props.server, props.busy))
+const uptime = computed(() => uptimeLabel(props.server, props.busy, props.now))
 </script>
 
 <style scoped>

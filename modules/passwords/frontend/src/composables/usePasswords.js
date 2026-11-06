@@ -1,5 +1,11 @@
 import { ref, computed, watch } from 'vue'
 import { encryptPassword, decryptPassword } from '@/utils/crypto'
+import {
+  extractDomain,
+  filterPasswords,
+  groupByLetter,
+  isValidDomain,
+} from '@/utils/passwordsList'
 import { useSession } from '@/stores/session'
 import api from '@/services/api'
 
@@ -13,50 +19,13 @@ export function usePasswords() {
 
   // ─── Filtrage & groupage ─────────────────────────────────────────────────────
 
-  const filteredPasswords = computed(() => {
-    if (!search.value) return passwordsList.value
-    const q = search.value.toLowerCase()
-    return passwordsList.value.filter(
-      (p) =>
-        p.title.toLowerCase().includes(q) ||
-        p.username?.toLowerCase().includes(q)
-    )
-  })
+  const filteredPasswords = computed(() =>
+    filterPasswords(passwordsList.value, search.value)
+  )
 
-  const groupedPasswords = computed(() => {
-    const groups = {}
-    filteredPasswords.value.forEach((p) => {
-      const letter = p.title[0].toUpperCase()
-      if (!groups[letter]) groups[letter] = []
-      groups[letter].push(p)
-    })
-    return Object.keys(groups)
-      .sort()
-      .map((letter) => ({
-        letter,
-        passwords: groups[letter],
-      }))
-  })
+  const groupedPasswords = computed(() => groupByLetter(filteredPasswords.value))
 
   // ─── Icônes ──────────────────────────────────────────────────────────────────
-
-  const extractDomain = (value) => {
-    if (!value) return null
-    try {
-      let domain = value.trim().toLowerCase()
-      if (value.startsWith('http')) domain = new URL(value).hostname
-      if (!domain.includes('.')) domain = `${domain}.com`
-      return domain
-    } catch {
-      return null
-    }
-  }
-
-  const isValidDomain = (domain) => {
-    return (
-      domain && domain.length > 4 && /^[a-z0-9.-]+\.[a-z]{2,}$/.test(domain)
-    )
-  }
 
   const loadIcon = async (title) => {
     const domain = extractDomain(title)
