@@ -1,8 +1,10 @@
 <template>
+  <!-- Hors de la carte en verre : son backdrop-filter piégerait le position: fixed -->
+  <Teleport to="body">
   <aside v-if="uploads.length" class="themed-card panel">
     <div class="panel-head">
       <strong>Envois ({{ active }} en cours)</strong>
-      <button class="icon-btn" title="Effacer les envois terminés" @click="$emit('clear')">
+      <button class="icon-btn" title="Effacer les envois terminés" aria-label="Effacer les envois terminés" @click="$emit('clear')">
         <span class="material-icons">done_all</span>
       </button>
     </div>
@@ -11,7 +13,8 @@
         <div class="line">
           <span class="name" :title="u.name">{{ u.name }}</span>
           <span class="state" :class="u.status">
-            <template v-if="u.status === 'encrypting'">Chiffrement {{ Math.round(u.progress * 100) }} %</template>
+            <template v-if="u.status === 'encrypting'">Chiffrement {{ Math.round(u.progress * 100) }} %  </Teleport>
+</template>
             <template v-else-if="u.status === 'uploading'">{{ Math.round(u.progress * 100) }} %</template>
             <template v-else-if="u.status === 'queued'">En attente</template>
             <template v-else-if="u.status === 'done'">Terminé</template>

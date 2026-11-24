@@ -161,7 +161,8 @@ const groups = computed(() =>
   }
   .sidebar-group {
     flex-direction: row;
-    gap: 4px;
+    flex-shrink: 0;
+    gap: 2px;
   }
   .group-account {
     margin-top: 0;
@@ -171,8 +172,13 @@ const groups = computed(() =>
     height: 44px;
     min-width: 44px;
     padding: 0 12px;
+    box-sizing: border-box;
     justify-content: center;
     gap: 8px;
+    flex-shrink: 0;
+  }
+  .nav-link:not(.active) {
+    padding: 0;
   }
   .nav-link:not(.active) .nav-label {
     display: none;

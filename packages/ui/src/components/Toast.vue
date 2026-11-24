@@ -1,10 +1,12 @@
 <template>
+  <Teleport to="body">
   <Transition name="toast">
     <div v-if="visible" class="toast" :class="`toast-${type}`" role="status" aria-live="polite">
       <span class="material-icons toast-icon" aria-hidden="true">{{ icon }}</span>
       {{ message }}
     </div>
   </Transition>
+  </Teleport>
 </template>
 
 <script setup>

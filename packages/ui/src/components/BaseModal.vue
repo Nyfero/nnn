@@ -1,4 +1,7 @@
 <template>
+  <!-- Téléportée dans <body> : un parent avec backdrop-filter (cartes en verre)
+       servirait sinon de référence au position: fixed de l'overlay -->
+  <Teleport to="body">
   <div class="modal-overlay">
     <div class="modal" role="dialog" aria-modal="true">
       <div class="modal-header" v-if="$slots.header">
@@ -14,6 +17,7 @@
       </div>
     </div>
   </div>
+  </Teleport>
 </template>
 
 <script setup>
