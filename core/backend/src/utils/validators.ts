@@ -13,6 +13,11 @@ export const isKeyBlob = (v: unknown): v is string =>
 export const isStr = (v: unknown, max = 255): v is string =>
   typeof v === 'string' && v.length > 0 && v.length <= max
 
+// Couleur d'accent de l'interface : "#rrggbb" uniquement (posée telle quelle dans le CSS)
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/
+export const isAccentColor = (v: unknown): v is string =>
+  typeof v === 'string' && HEX_COLOR.test(v)
+
 export const normalizeEmail = (e: string) => e.trim().toLowerCase()
 
 // Doit rester identique côté client (dérivation de la KEK de récupération)

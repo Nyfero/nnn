@@ -6,6 +6,7 @@ import { TOKEN_TYPES, TTL } from '../config'
 import { ah } from '../utils/asyncHandler'
 import { hashToken, randomToken } from '../utils/jwt'
 import {
+  isAccentColor,
   isKeyBlob,
   isQA,
   isQuestionList,
@@ -360,6 +361,29 @@ router.put(
       encrypted_master_key,
       kek_salt,
     })
+  })
+)
+
+// ─── PRÉFÉRENCES D'INTERFACE ─────────────────────────────────────────────────
+// { theme_accent: "#rrggbb" | null } ; null = retour au violet par défaut.
+router.put(
+  '/preferences',
+  authMiddleware,
+  ah(async (req, res) => {
+    const body = req.body ?? {}
+    if (!Object.prototype.hasOwnProperty.call(body, 'theme_accent')) {
+      return res.status(400).json({ error: 'Champs manquants ou invalides' })
+    }
+    const { theme_accent } = body
+    if (theme_accent !== null && !isAccentColor(theme_accent)) {
+      return res.status(400).json({ error: 'Couleur invalide (format #rrggbb attendu)' })
+    }
+    const value = theme_accent === null ? null : theme_accent.toLowerCase()
+    await prisma.users.update({
+      where: { user_id: req.user!.user_id },
+      data: { theme_accent: value },
+    })
+    res.json({ theme_accent: value })
   })
 )
 

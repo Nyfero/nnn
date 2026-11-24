@@ -29,6 +29,9 @@ model users {
   recovery_encrypted_master_key String? @db.Text // chiffrée par la KEK des réponses
   recovery_kek_salt             String? @db.VarChar(64)
 
+  // Préférence d'interface : couleur d'accent "#rrggbb" (null = violet par défaut)
+  theme_accent String? @db.VarChar(7)
+
   tokens      tokens[]
   sessions    sessions[]
   userRoles   userRoles[]

@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {
+  isAccentColor,
   isKeyBlob,
   isQA,
   isQuestionList,
@@ -93,4 +94,11 @@ test('durées de vie : cohérentes entre elles', () => {
   assert.ok(TTL.ACCESS_SECONDS * 1000 < TTL.REFRESH_MS, 'le jeton d\'accès expire avant le refresh')
   assert.ok(TTL.RESET_VERIFIED_MS <= TTL.RESET_MS, 'l\'étape validée ne dure pas plus que le lien de reset')
   assert.ok(TTL.REFRESH_GRACE_MS > 0 && TTL.REFRESH_GRACE_MS < 60_000)
+})
+
+test("isAccentColor : couleur d'accent #rrggbb uniquement (posée telle quelle dans le CSS)", () => {
+  for (const ok of ['#5a43c9', '#FFFFFF', '#000000', '#aBc123']) assert.ok(isAccentColor(ok), ok)
+  for (const bad of ['5a43c9', '#fff', '#5a43c9ff', '#gggggg', 'red', '', ' #5a43c9', '#5a43c9\n', '#5a43c9;}body{', null, undefined, 42, {}, ['#5a43c9']]) {
+    assert.ok(!isAccentColor(bad), `devrait refuser ${JSON.stringify(bad)}`)
+  }
 })

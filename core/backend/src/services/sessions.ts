@@ -53,6 +53,7 @@ export async function buildAuthResponse(userId: number, sid: number) {
       isAdmin,
       kek_salt: user.kek_salt,
       encrypted_master_key: user.encrypted_master_key,
+      theme_accent: user.theme_accent,
       modules,
     },
   }

@@ -652,6 +652,56 @@ test('19. refresh : rotation du cookie, tolérance aux requêtes concurrentes, d
   )
 })
 
+// ═════════════════════════ 7b. Préférence d'interface (couleur d'accent) ═════════════════════════
+test("19b. couleur d'accent : validée, persistée, retrouvée sur un autre appareil et par le module", async () => {
+  const c = new Client('accent')
+  const login = await c.login(USER.email, USER.password)
+  expect(login, 200)
+  assert.equal(login.data.user.theme_accent, null, 'pas de préférence par défaut')
+
+  // Authentification obligatoire
+  expect(await new Client().put('/api/core/auth/preferences', { theme_accent: '#5eead4' }), 401)
+
+  // Validation stricte côté serveur
+  for (const bad of ['#fff', 'red', '#5eead4ff', '#5eead4;}', 'url(x)', 42, '', {}, ['#5eead4']]) {
+    expect(await c.put('/api/core/auth/preferences', { theme_accent: bad }), 400, JSON.stringify(bad))
+  }
+  expect(await c.put('/api/core/auth/preferences', {}), 400, 'champ absent')
+
+  const set = await c.put('/api/core/auth/preferences', { theme_accent: '#5EEAD4' })
+  expect(set, 200)
+  assert.deepEqual(set.data, { theme_accent: '#5eead4' })
+
+  // Rechargement de la page (refresh) et module : même objet utilisateur
+  const refreshed = await c.post('/api/core/auth/refresh', {}, { auth: false })
+  expect(refreshed, 200)
+  assert.equal(refreshed.data.user.theme_accent, '#5eead4')
+
+  // Autre navigateur : la couleur suit le compte
+  const other = new Client('accent-autre-navigateur')
+  const otherLogin = await other.login(USER.email, USER.password)
+  expect(otherLogin, 200)
+  assert.equal(otherLogin.data.user.theme_accent, '#5eead4')
+
+  // Les frontends (core et module) appliquent la couleur avant le bundle : pas de flash
+  for (const path of ['/', '/passwords/']) {
+    const html = await (await fetch(`${BASE}${path}`)).text()
+    const boot = html.indexOf("localStorage.getItem(\"mp-accent\")")
+    assert.ok(boot > 0, `${path} : script anti-flash présent`)
+    assert.ok(boot < html.indexOf('type="module"'), `${path} : script anti-flash avant le bundle`)
+  }
+
+  // null : retour au violet par défaut
+  const reset = await c.put('/api/core/auth/preferences', { theme_accent: null })
+  expect(reset, 200)
+  assert.deepEqual(reset.data, { theme_accent: null })
+  const after = await other.post('/api/core/auth/refresh', {}, { auth: false })
+  assert.equal(after.data.user.theme_accent, null)
+
+  await c.post('/api/core/auth/logout', {}, { auth: false })
+  await other.post('/api/core/auth/logout', {}, { auth: false })
+})
+
 test('20. révocation : le core refuse tout de suite, le module après le cache de 5 s', async () => {
   const c = new Client('revoke')
   expect((await c.login(USER.email, USER.password)).status, 200)
