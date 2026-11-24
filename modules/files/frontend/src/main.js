@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import '@myprout/ui/styles/theme.css'
+import { applyAccent } from '@myprout/ui'
 import { getModuleKey, redirectToLogin, redirectToUnlock, refreshSession } from '@myprout/sdk/client'
 import App from './App.vue'
 import api from '@/services/api'
@@ -30,6 +31,8 @@ async function bootstrap() {
     return
   }
   session.setSession(data)
+  // Couleur d'accent du compte (avant le montage : pas de changement visible)
+  applyAccent(data.user.theme_accent ?? null)
 
   // 2. Clé du module (dérivée de la clé maître, IndexedDB) : protège les clés des coffres.
   //    Absente -> déverrouillage via le core.

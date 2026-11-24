@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import '@myprout/ui/styles/theme.css'
+import { applyAccent } from '@myprout/ui'
 import { redirectToLogin, refreshSession } from '@myprout/sdk/client'
 import App from './App.vue'
 import api from '@/services/api'
@@ -23,6 +24,8 @@ async function bootstrap() {
   // Session : cookie de refresh du core (même origine)
   try {
     session.setSession(await refreshSession())
+    // Couleur d'accent du compte (avant le montage : pas de changement visible)
+    applyAccent(session.user?.theme_accent ?? null)
   } catch (error) {
     if (error.response?.status === 401) return redirectToLogin()
     document.getElementById('app').textContent = 'Service indisponible, réessayez dans un instant.'
