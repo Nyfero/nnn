@@ -1,5 +1,5 @@
 <template>
-  <div class="themed-card passwords-page">
+  <div class="passwords-page">
     <PasswordsList />
   </div>
 </template>

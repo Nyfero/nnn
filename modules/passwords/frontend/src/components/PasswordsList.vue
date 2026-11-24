@@ -1,26 +1,31 @@
 <template>
   <div class="passwordsList-main-wrapper">
-    <div class="passwordsList-header">
-      <h1 class="themed-h1 passwordsList-title">
-        Mes mots de passe ({{ passwordsList.length }})
-      </h1>
+    <header class="passwordsList-header">
+      <div class="passwordsList-heading">
+        <h1 class="themed-h1 passwordsList-title">Mes mots de passe</h1>
+        <span class="pill" :aria-label="`${passwordsList.length} entrées`">{{ passwordsList.length }}</span>
+      </div>
       <div class="passwordsList-actions">
-        <button
-          class="themed-button button-primary add-wrap"
-          @click="openCreate()"
-        >
-          Ajouter +
-        </button>
-        <div class="filter-wrap" v-if="passwordsList.length !== 0">
+        <div class="search-wrap" v-if="passwordsList.length !== 0">
+          <span class="material-icons search-icon" aria-hidden="true">search</span>
           <input
             class="themed-input search-input"
             v-model="search"
-            type="text"
+            type="search"
             placeholder="Rechercher..."
+            aria-label="Rechercher un mot de passe"
           />
         </div>
+        <button
+          class="themed-button button-primary add-button"
+          type="button"
+          @click="openCreate()"
+        >
+          <span class="material-icons" aria-hidden="true">add</span>
+          Ajouter
+        </button>
       </div>
-    </div>
+    </header>
 
     <div v-if="loading" class="loading">Chargement...</div>
 
@@ -29,16 +34,15 @@
     </div>
 
     <div v-else class="passwordsList-wrapper">
-      <PasswordsAlphabet @scroll="scrollToLetter" />
-
       <div class="passwordsList" ref="passwordsListRef">
-        <div
+        <section
           v-for="group in groupedPasswords"
           :key="group.letter"
           class="password-group"
           :id="`group-${group.letter}`"
+          :aria-labelledby="`group-title-${group.letter}`"
         >
-          <div class="password-group-letter">{{ group.letter }}</div>
+          <h2 class="password-group-letter" :id="`group-title-${group.letter}`">{{ group.letter }}</h2>
           <PasswordsCard
             v-for="password in group.passwords"
             :key="password.password_id"
@@ -51,8 +55,13 @@
             @copy="handleCopyPassword"
             @click="openView(password)"
           />
-        </div>
+        </section>
       </div>
+
+      <PasswordsAlphabet
+        :available="groupedPasswords.map((g) => g.letter)"
+        @scroll="scrollToLetter"
+      />
     </div>
   </div>
   <Toast ref="toastRef" />
@@ -203,101 +212,112 @@ async function handleDeletePassword(id) {
 
 <style scoped>
 .passwordsList-main-wrapper {
-  padding: 1rem;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  scrollbar-width: none;
   box-sizing: border-box;
-}
-
-.passwordsList-main-wrapper::-webkit-scrollbar {
-  display: none;
 }
 
 .passwordsList-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  margin-bottom: 1.5rem;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: black;
-  padding: 1rem;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
 }
 
+.passwordsList-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
 .passwordsList-title {
-  flex: 1;
+  margin: 0;
 }
 
 .passwordsList-actions {
-  flex: 1;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.add-wrap {
-  flex: 1;
+.search-wrap {
+  position: relative;
+  width: 280px;
+  max-width: 100%;
 }
-
-.filter-wrap {
-  flex: 2;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.search-icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 19px;
+  color: var(--mp-faint);
+  pointer-events: none;
 }
-
 .search-input {
-  flex: 9;
-  padding: 12px;
+  margin: 0;
+  padding-left: 40px;
 }
 
-.password-group-letter {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #f9f0a8;
-  padding: 0.5rem 0;
-  margin-top: 1rem;
-}
-
-.password-group-letter::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background-color: #f7e96e;
-  opacity: 0.3;
+.add-button {
+  width: auto;
 }
 
 .passwordsList-wrapper {
   display: flex;
+  gap: 12px;
   flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
 .passwordsList {
+  flex: 1;
+  min-width: 0;
   display: flex;
-  flex: 97%;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 8px;
   overflow-y: auto;
-  scrollbar-width: none;
-  padding-bottom: 1rem;
+  padding: 2px 2px 1rem;
 }
 
-.passwordsList::-webkit-scrollbar {
-  display: none;
+.password-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.password-group-letter {
+  font-family: var(--mp-font-head);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--mp-muted);
+  margin: 14px 0 2px 6px;
+}
+.password-group:first-child .password-group-letter {
+  margin-top: 0;
 }
 
 .loading,
 .empty {
-  text-align: center;
   color: var(--mp-muted);
-  margin-top: 3rem;
-  font-size: 1.1rem;
+  margin-top: 2rem;
+  font-size: 15px;
+}
+
+@media (max-width: 899px) {
+  .passwordsList-actions,
+  .search-wrap {
+    width: 100%;
+  }
+  .search-wrap {
+    flex: 1;
+  }
 }
 </style>

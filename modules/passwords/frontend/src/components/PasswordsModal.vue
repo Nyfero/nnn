@@ -2,8 +2,6 @@
   <BaseModal @close="$emit('close')">
     <!-- Header -->
     <template #header>
-      <div class="modal-header-empty" />
-
       <div class="modal-header-title">
         <h2 class="themed-h2">
           {{
@@ -18,7 +16,7 @@
 
       <div class="modal-header-actions">
         <button class="modal-close" type="button" aria-label="Fermer" @click="$emit('close')">
-          <span class="material-icons">close</span>
+          <span class="material-icons" aria-hidden="true">close</span>
         </button>
       </div>
     </template>
@@ -26,25 +24,25 @@
     <!-- Body -->
     <div class="modal-form">
       <!-- Titre -->
-      <div class="form-group">
-        <label class="themed-label">Titre</label>
+      <div class="form-group" v-if="modalMode !== 'view'">
+        <label class="themed-label" for="pw-title">Titre</label>
         <input
-          v-if="modalMode !== 'view'"
+          id="pw-title"
           class="themed-input"
           v-model="localForm.title"
           type="text"
           placeholder="Google, Youtube..."
           required
         />
-        <span v-else class="form-value">{{ localForm.title }}</span>
       </div>
 
       <!-- Username -->
       <div class="form-group">
-        <label class="themed-label">Nom d'utilisateur</label>
+        <label class="themed-label" :for="modalMode !== 'view' ? 'pw-username' : undefined">Nom d'utilisateur</label>
         <div class="form-wrapper">
           <input
             v-if="modalMode !== 'view'"
+            id="pw-username"
             class="themed-input"
             v-model="localForm.username"
             type="text"
@@ -53,11 +51,12 @@
           <span v-else class="form-value">{{ localForm.username || '—' }}</span>
           <div class="input-actions">
             <button
+              type="button"
               class="copy-btn"
+              :aria-label="copied === 'username' ? 'Copié' : 'Copier le nom d\'utilisateur'"
               @click="copyToClipboard(localForm.username, 'username')"
-              title="Copier"
             >
-              <span class="material-icons">{{
+              <span class="material-icons" aria-hidden="true">{{
                 copied === 'username' ? 'check' : 'content_copy'
               }}</span>
             </button>
@@ -67,13 +66,15 @@
 
       <!-- Password -->
       <div class="form-group">
-        <label class="themed-label">Mot de passe</label>
+        <label class="themed-label" :for="modalMode !== 'view' ? 'pw-password' : undefined">Mot de passe</label>
         <div class="form-wrapper">
           <input
             v-if="modalMode !== 'view'"
+            id="pw-password"
             class="themed-input"
             v-model="localForm.password"
             :type="showPassword ? 'text' : 'password'"
+            autocomplete="new-password"
             required
           />
           <span v-else class="form-value password-value">{{
@@ -81,28 +82,33 @@
           }}</span>
           <div class="input-actions">
             <button
+              type="button"
               class="toggle-password"
+              :aria-label="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
               @click="showPassword = !showPassword"
             >
-              <span class="material-icons">{{
+              <span class="material-icons" aria-hidden="true">{{
                 showPassword ? 'visibility_off' : 'visibility'
               }}</span>
             </button>
             <button
               v-if="modalMode !== 'view'"
+              type="button"
               class="copy-btn"
-              @click="generatePassword"
+              aria-label="Générer un mot de passe"
               title="Générer"
+              @click="generatePassword"
             >
-              <span class="material-icons">casino</span>
+              <span class="material-icons" aria-hidden="true">casino</span>
             </button>
             <button
               v-else
+              type="button"
               class="copy-btn"
+              :aria-label="copied === 'password' ? 'Copié' : 'Copier le mot de passe'"
               @click="copyToClipboard(decryptedPassword, 'password')"
-              title="Copier"
             >
-              <span class="material-icons">{{
+              <span class="material-icons" aria-hidden="true">{{
                 copied === 'password' ? 'check' : 'content_copy'
               }}</span>
             </button>
@@ -112,16 +118,17 @@
 
       <!-- Note -->
       <div class="form-group">
-        <label class="themed-label">Note</label>
+        <label class="themed-label" :for="modalMode !== 'view' ? 'pw-note' : undefined">Note</label>
         <textarea
           v-if="modalMode !== 'view'"
+          id="pw-note"
           class="themed-textarea"
           v-model="localForm.note"
           rows="3"
           placeholder="Note optionnelle..."
           maxlength="300"
         />
-        <span v-else class="form-value">{{ localForm.note || '—' }}</span>
+        <span v-else class="form-value note-value">{{ localForm.note || '—' }}</span>
         <span
           v-if="modalMode !== 'view'"
           class="char-counter"
@@ -139,24 +146,26 @@
       <div class="modal-footer-left">
         <button
           v-if="modalMode === 'edit'"
-          class="themed-button button-secondary btn-delete"
+          type="button"
+          class="themed-button button-danger"
           @click="$emit('delete')"
         >
+          <span class="material-icons" aria-hidden="true">delete</span>
           <span>Supprimer</span>
-          <span class="material-icons">delete</span>
         </button>
       </div>
 
       <!-- Mode création / édition -->
       <div class="modal-footer-right" v-if="modalMode !== 'view'">
         <button
+          type="button"
           class="themed-button button-secondary"
-          v-if="modalMode === 'edit'"
-          @click="$emit('switch-mode', 'view')"
+          @click="modalMode === 'edit' ? $emit('switch-mode', 'view') : $emit('close')"
         >
           Annuler
         </button>
         <button
+          type="button"
           class="themed-button button-primary"
           :disabled="loading"
           @click="$emit('submit', localForm)"
@@ -168,11 +177,12 @@
       <!-- Mode vue -->
       <div class="modal-footer-right" v-else>
         <button
-          class="themed-button button-secondary btn-edit"
+          type="button"
+          class="themed-button button-primary"
           @click="$emit('switch-mode', 'edit')"
         >
+          <span class="material-icons" aria-hidden="true">edit</span>
           <span>Modifier</span>
-          <span class="material-icons edit-icon">edit</span>
         </button>
       </div>
     </template>
@@ -278,20 +288,11 @@ function handleKeydown(e) {
 </script>
 
 <style scoped>
-.btn-edit {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.password-value {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
-
-.btn-delete {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border: 1px solid transparent;
-}
-.btn-delete:hover {
-  border-color: var(--mp-danger);
-  color: var(--mp-danger);
+.note-value {
+  color: var(--mp-muted);
 }
 </style>
