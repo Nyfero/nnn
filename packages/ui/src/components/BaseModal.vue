@@ -1,6 +1,6 @@
 <template>
   <div class="modal-overlay">
-    <div class="modal themed-card">
+    <div class="modal" role="dialog" aria-modal="true">
       <div class="modal-header" v-if="$slots.header">
         <slot name="header" />
       </div>

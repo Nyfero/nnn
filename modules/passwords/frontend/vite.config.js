@@ -1,11 +1,12 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { accentBootPlugin } from '@myprout/ui/vite'
 
 // Le module est servi sous /passwords/ (voir proxy/Caddyfile)
 export default defineConfig({
   base: '/passwords/',
-  plugins: [vue()],
+  plugins: [vue(), accentBootPlugin()],
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     dedupe: ['vue'],

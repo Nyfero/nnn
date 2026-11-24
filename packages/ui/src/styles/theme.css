@@ -1,13 +1,37 @@
-/* ───────── Tokens ───────── */
+/* ───────── Tokens ─────────
+   Charte « Aurora latérale ». Règle : aucune couleur d'accent en dur dans les composants,
+   uniquement var(--mp-accent), var(--mp-on-accent) et var(--mp-accent-text).
+   Ces trois variables sont recalculées par applyAccent() (useAccent.js). Voir docs/theme.md. */
 :root {
-  --mp-accent: #c25fff;
-  --mp-accent-dark: #8342cf;
-  --mp-highlight: #f9f0a8;
-  --mp-danger: #ff4d4d;
-  --mp-success: #4bb543;
-  --mp-muted: #aaa;
-  --mp-card-bg: rgba(10, 10, 10, 0.05);
-  --mp-input-bg: rgba(28, 28, 32, 1);
+  /* Accent : seule valeur modifiable par l'utilisateur */
+  --mp-accent: #5a43c9; /* défaut = violet */
+  --mp-on-accent: #ffffff; /* texte sur fond accent, calculé en JS */
+  --mp-accent-text: #7865d3; /* accent comme couleur de texte sur fond noir, calculé en JS */
+
+  --mp-bg: #000;
+  --mp-text: #f5f5f7;
+  --mp-muted: #a1a1aa; /* texte secondaire, libellés */
+  --mp-faint: #8a8a93; /* notes, placeholders (≥ 4.5:1 sur noir) */
+  --mp-danger: #f87171;
+  --mp-success: #4ade80;
+  --mp-warning: #fbbf24;
+
+  --mp-glass-bg: rgba(255, 255, 255, 0.045);
+  --mp-glass-border: rgba(255, 255, 255, 0.1);
+  --mp-glass-border-strong: rgba(255, 255, 255, 0.14);
+  --mp-field-bg: rgba(255, 255, 255, 0.05);
+  --mp-field-border: rgba(255, 255, 255, 0.12);
+  --mp-divider: rgba(255, 255, 255, 0.08);
+  --mp-scrim: rgba(0, 0, 0, 0.62);
+
+  --mp-radius-panel: 28px; /* sidebar, modals */
+  --mp-radius-card: 24px; /* cartes */
+  --mp-radius-row: 20px; /* lignes de liste */
+  --mp-radius-control: 14px; /* boutons, champs */
+  --mp-radius-small: 12px; /* boutons-icônes */
+
+  --mp-font-body: 'Inter', system-ui, sans-serif;
+  --mp-font-head: 'Space Grotesk', 'Inter', sans-serif;
 }
 
 html,
@@ -16,6 +40,13 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+body {
+  background: var(--mp-bg);
+  color: var(--mp-text);
+  font-family: var(--mp-font-body);
+  -webkit-font-smoothing: antialiased;
 }
 
 #app {
@@ -30,170 +61,242 @@ body {
   display: none; /* Chrome, Safari, Edge */
 }
 
-/* ───────── Main theme ───────── */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* Focus clavier visible partout. --mp-accent-text reste lisible sur noir quel que soit l'accent. */
+:focus-visible {
+  outline: 2px solid var(--mp-accent-text);
+  outline-offset: 2px;
+}
+
+a {
+  color: var(--mp-accent-text);
+}
+
+/* ───────── Surfaces ───────── */
 
 .themed-card {
-  background: var(--mp-card-bg);
-  border: 2px solid #fff;
-  border-radius: 22px;
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(7px);
-  color: #fff;
+  background: var(--mp-glass-bg);
+  border: 1px solid var(--mp-glass-border);
+  border-radius: var(--mp-radius-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--mp-text);
+  box-sizing: border-box;
 }
 
-.themed-h1 {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  padding: 0;
-  font-weight: 800;
-  color: #fff;
-  text-shadow: 0px 0px 3px var(--mp-accent);
-  font-family: 'Poppins', sans-serif;
-}
-
+.themed-h1,
 .themed-h2 {
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-  padding: 0;
+  font-family: var(--mp-font-head);
   font-weight: 600;
-  color: #fff;
-  text-shadow: 0px 0px 3px var(--mp-accent);
-  font-family: 'Poppins', sans-serif;
+  letter-spacing: -0.02em;
+  color: var(--mp-text);
+  padding: 0;
+  margin: 0 0 20px;
 }
-
-.themed-input {
-  margin: 8px 0;
-  padding: 10px 9px;
-  width: 95%;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  background: var(--mp-input-bg);
-  color: #fff;
-  outline: none;
-  font-size: 1rem;
+.themed-h1 {
+  font-size: 36px;
+  line-height: 1.15;
 }
-.themed-textarea:focus,
-.themed-input:focus {
-  border: 1px solid var(--mp-accent);
-  transition: 0.5s;
-}
-
-.themed-textarea {
-  margin: 8px 0;
-  padding: 0.6rem 0.9rem;
-  width: 95%;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  background: var(--mp-input-bg);
-  color: #fff;
-  outline: none;
-  font-size: 0.95rem;
-  resize: none;
-}
-
-.themed-button {
-  width: 100%;
-  border-radius: 12px;
-  border: none;
-  padding: 12px;
-  cursor: pointer;
-  transition: background 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.button-primary {
-  background: linear-gradient(90deg, var(--mp-accent), var(--mp-accent-dark));
-  color: #fff;
-  font-weight: bold;
-  font-size: 1.1rem;
-  transition: 1s;
-}
-.button-primary:hover {
-  filter: brightness(1.3);
-  transition: 1s;
-}
-.button-primary:disabled {
-  background: linear-gradient(90deg, var(--mp-accent), var(--mp-accent-dark));
-  opacity: 0.4;
-  cursor: not-allowed;
-  filter: none;
-}
-
-.button-secondary {
-  background: none;
-  color: grey;
-  font-size: 1rem;
-  transition: 1s;
-}
-.button-secondary:hover {
-  color: var(--mp-accent);
-  transition: 1s;
-  background-color: var(--mp-input-bg);
-}
-
-.button-danger {
-  background-color: var(--mp-danger);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.button-danger:hover {
-  background-color: #cc0000;
-}
-.button-danger:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.themed-h2 {
+  font-size: 20px;
+  line-height: 1.3;
 }
 
 .themed-label {
-  font-size: 1rem;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mp-muted);
   padding: 0;
-  font-weight: 300;
-  color: #fff;
-  text-shadow: 0px 0px 3px var(--mp-accent);
-  font-family: 'Poppins', sans-serif;
 }
 
 .themed-separator {
   border: none;
   margin: 0.2rem 0;
-  border-top: 1px solid var(--mp-accent);
-  opacity: 0.3;
+  border-top: 1px solid var(--mp-divider);
 }
 
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--mp-muted);
+}
+
+/* ───────── Champs ───────── */
+
+.themed-input,
+.themed-textarea,
+.themed-select {
+  margin: 6px 0;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--mp-field-border);
+  border-radius: var(--mp-radius-control);
+  background: var(--mp-field-bg);
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.themed-input,
+.themed-select {
+  height: 44px;
+  padding: 0 14px;
+}
+.themed-textarea {
+  padding: 12px 14px;
+  resize: none;
+  line-height: 1.45;
+}
+.themed-input::placeholder,
+.themed-textarea::placeholder {
+  color: var(--mp-faint);
+}
+.themed-input:focus,
+.themed-textarea:focus,
+.themed-select:focus {
+  border-color: var(--mp-accent);
+  outline: 2px solid var(--mp-accent-text);
+  outline-offset: 2px;
+}
+.themed-input:disabled,
+.themed-textarea:disabled {
+  opacity: 0.6;
+}
+.themed-select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 2.2em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23a1a1aa'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9em center;
+}
+.themed-select option,
+.themed-select optgroup {
+  background: #16161e;
+  color: #fff;
+}
+
+/* ───────── Boutons ───────── */
+
+.themed-button {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+  border-radius: var(--mp-radius-control);
+  border: 1px solid transparent;
+  padding: 0 18px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    filter 0.15s,
+    border-color 0.15s,
+    background-color 0.15s;
+}
+.themed-button .material-icons {
+  font-size: 19px;
+}
+.themed-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: none;
+}
+
+.button-primary {
+  background: var(--mp-accent);
+  color: var(--mp-on-accent);
+}
+.button-primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.button-secondary {
+  background: var(--mp-field-bg);
+  border-color: var(--mp-field-border);
+  color: #e4e4e7;
+}
+.button-secondary:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.button-danger {
+  background: rgba(248, 113, 113, 0.12);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: var(--mp-danger);
+}
+.button-danger:hover:not(:disabled) {
+  border-color: rgba(248, 113, 113, 0.55);
+}
+
+/* Boutons-icônes (œil, copier, fermer…) : aria-label obligatoire */
+.icon-button,
 .toggle-password,
-.copy-btn {
-  background: transparent;
-  border: none;
+.copy-btn,
+.modal-close {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: var(--mp-radius-small);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--mp-field-border);
   color: var(--mp-muted);
   cursor: pointer;
-  display: flex;
-  margin-top: 0;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 }
+.icon-button .material-icons,
+.toggle-password .material-icons,
+.copy-btn .material-icons,
+.modal-close .material-icons {
+  font-size: 19px;
+}
+.icon-button:hover,
 .toggle-password:hover,
-.copy-btn:hover {
-  color: var(--mp-accent);
+.copy-btn:hover,
+.modal-close:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.28);
 }
 
+/* ───────── Messages ───────── */
+
 .form-error {
-  color: #ff5555;
-  font-size: 0.9rem;
+  color: var(--mp-danger);
+  font-size: 14px;
   text-align: center;
 }
 
 .char-counter {
-  font-size: 0.75rem;
-  color: #888;
+  font-size: 12px;
+  color: var(--mp-faint);
   text-align: right;
   margin-top: 4px;
   display: block;
   pointer-events: none;
 }
 .char-counter.near-limit {
-  color: #e74c3c;
+  color: var(--mp-danger);
 }
 
 /* ───────── Formulaires (login, modales...) ───────── */
@@ -217,21 +320,44 @@ body {
 
 .form-wrapper input {
   width: 100%;
-  padding-right: 2.5rem;
+  padding-right: 3.2rem;
 }
 
 .input-actions {
   position: absolute;
-  right: 0.5rem;
+  right: 4px;
   display: flex;
   align-items: center;
   gap: 4px;
 }
+/* Dans un champ, les boutons-icônes sont plus discrets (le champ fait 44 px de haut) */
+.input-actions .toggle-password,
+.input-actions .copy-btn {
+  width: 36px;
+  height: 36px;
+  border-color: transparent;
+  background: transparent;
+}
+.form-wrapper:has(.input-actions > :nth-child(2)) input {
+  padding-right: 5.6rem;
+}
 
+/* Valeur en lecture (modal de consultation) : même gabarit qu'un champ */
 .form-value {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 14px;
+  border-radius: var(--mp-radius-control);
+  background: var(--mp-field-bg);
+  border: 1px solid transparent;
   word-break: break-word;
   overflow-wrap: break-word;
   white-space: pre-wrap;
+}
+.form-wrapper .form-value {
+  padding-right: 3.2rem;
 }
 
 /* ───────── Helpers ───────── */
@@ -241,4 +367,16 @@ body {
 
 .flex-2 {
   flex: 2;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

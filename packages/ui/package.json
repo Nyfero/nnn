@@ -6,8 +6,12 @@
   "main": "./src/index.js",
   "exports": {
     ".": "./src/index.js",
+    "./vite": "./src/vite.js",
     "./styles/theme.css": "./src/styles/theme.css",
     "./styles/modal.css": "./src/styles/modal.css"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
   },
   "peerDependencies": {
     "vue": "^3.4.0"
