@@ -4,46 +4,55 @@
       <div :key="step">
         <!-- LOGIN -->
         <template v-if="step === 'login'">
+          <div class="login-brand">Myprout</div>
           <div class="login-header"><h2 class="themed-h2">Connexion</h2></div>
           <div class="login-body">
             <form @submit.prevent="onSubmit">
-              <input
-                class="themed-input"
-                v-model="form.email"
-                type="email"
-                placeholder="E-mail"
-                autocomplete="username"
-                required
-              />
-              <div class="form-wrapper">
+              <div class="form-group">
+                <label class="themed-label" for="login-email">E-mail</label>
                 <input
+                  id="login-email"
                   class="themed-input"
-                  v-model="form.password"
-                  :type="showPassword ? 'text' : 'password'"
-                  placeholder="Mot de passe"
-                  autocomplete="current-password"
+                  v-model="form.email"
+                  type="email"
+                  placeholder="vous@exemple.fr"
+                  autocomplete="username"
                   required
                 />
-                <div class="input-actions">
-                  <button
-                    class="toggle-password"
-                    type="button"
-                    @click="showPassword = !showPassword"
-                  >
-                    <span class="material-icons">{{
-                      showPassword ? 'visibility_off' : 'visibility'
-                    }}</span>
-                  </button>
-                </div>
               </div>
-              <a
-                class="forgot-password"
-                href="#"
-                @click.prevent="step = 'forgot'"
-              >
-                Mot de passe oublié ?
-              </a>
-              <p class="form-error">{{ errorMessage }}</p>
+              <div class="form-group">
+                <label class="themed-label" for="login-password">Mot de passe</label>
+                <div class="form-wrapper">
+                  <input
+                    id="login-password"
+                    class="themed-input"
+                    v-model="form.password"
+                    :type="showPassword ? 'text' : 'password'"
+                    autocomplete="current-password"
+                    required
+                  />
+                  <div class="input-actions">
+                    <button
+                      class="toggle-password"
+                      type="button"
+                      :aria-label="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                      @click="showPassword = !showPassword"
+                    >
+                      <span class="material-icons" aria-hidden="true">{{
+                        showPassword ? 'visibility_off' : 'visibility'
+                      }}</span>
+                    </button>
+                  </div>
+                </div>
+                <a
+                  class="forgot-password"
+                  href="#"
+                  @click.prevent="step = 'forgot'"
+                >
+                  Mot de passe oublié ?
+                </a>
+              </div>
+              <p v-if="errorMessage" class="form-error">{{ errorMessage }}</p>
 
               <div class="login-footer">
                 <button
@@ -54,7 +63,7 @@
                   {{ isLoading ? 'En cours...' : 'Se connecter' }}
                 </button>
                 <button
-                  class="themed-button button-secondary"
+                  class="text-link"
                   type="button"
                   @click="$emit('switch')"
                 >
@@ -75,7 +84,9 @@
               Entrez votre adresse email pour recevoir un lien de
               réinitialisation.
             </p>
+            <label class="themed-label" for="forgot-email">E-mail</label>
             <input
+              id="forgot-email"
               class="themed-input"
               v-model="forgotEmail"
               type="email"
@@ -93,10 +104,7 @@
             >
               {{ forgotLoading ? 'Envoi...' : 'Envoyer le lien' }}
             </button>
-            <button
-              class="themed-button button-secondary"
-              @click="step = 'login'"
-            >
+            <button class="text-link" type="button" @click="step = 'login'">
               Retour
             </button>
           </div>
@@ -119,10 +127,10 @@
               rel="noopener"
               class="themed-button button-primary email-link-btn"
             >
-              <span class="material-icons">open_in_new</span>
+              <span class="material-icons" aria-hidden="true">open_in_new</span>
               {{ forgotEmail }}
             </a>
-            <strong v-else class="themed-label">{{ forgotEmail }}</strong>
+            <strong v-else class="sent-email">{{ forgotEmail }}</strong>
             <p>Pensez à vérifier vos spams.</p>
           </div>
           <div class="login-footer">
@@ -215,18 +223,22 @@ async function handleForgotPassword() {
 
 <style scoped>
 .forgot-password {
-  font-size: 0.9em;
-  color: grey;
-  text-decoration: underline;
-  cursor: pointer;
+  align-self: flex-end;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mp-accent-text);
+  text-decoration: none;
+  padding: 4px 2px;
 }
 .forgot-password:hover {
-  color: var(--mp-accent);
+  text-decoration: underline;
+}
+.sent-email {
+  color: var(--mp-text);
+  overflow-wrap: anywhere;
 }
 .email-link-btn {
-  color: #fff;
-  text-decoration: none;
-  gap: 0.5rem;
   box-sizing: border-box;
+  overflow-wrap: anywhere;
 }
 </style>

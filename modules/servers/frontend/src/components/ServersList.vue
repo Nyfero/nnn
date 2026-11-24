@@ -63,6 +63,6 @@ function restart(server) {
 <style scoped>
 .servers-list { max-width: 900px; margin: 0 auto; padding: 1rem; }
 .servers-title { text-align: center; }
-.empty { color: #aaa; text-align: center; margin-top: 3rem; line-height: 1.6; }
+.empty { color: var(--mp-muted); text-align: center; margin-top: 3rem; line-height: 1.6; }
 .grid { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
 </style>

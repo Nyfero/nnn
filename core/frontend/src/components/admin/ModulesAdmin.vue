@@ -85,7 +85,7 @@ const formatDate = (d) =>
   margin: 0 auto;
 }
 .empty {
-  color: #aaa;
+  color: var(--mp-muted);
   text-align: center;
   margin-top: 3rem;
 }
@@ -99,16 +99,16 @@ const formatDate = (d) =>
   align-items: center;
   gap: 1.2rem;
   padding: 1rem 1.5rem;
-  border-radius: 12px;
-  background: #1e1e2e;
-  border: 1px solid #2e2e3e;
+  border-radius: var(--mp-radius-row);
+  background: var(--mp-glass-bg);
+  border: 1px solid var(--mp-glass-border);
 }
 .module-card.off {
   opacity: 0.55;
 }
 .m-icon {
   font-size: 2rem;
-  color: var(--mp-accent);
+  color: var(--mp-accent-text);
 }
 .m-info {
   flex: 1;
@@ -122,7 +122,7 @@ const formatDate = (d) =>
   font-size: 1.05rem;
 }
 .m-meta {
-  color: #888;
+  color: var(--mp-faint);
   font-size: 0.8rem;
 }
 .toggle {
@@ -135,7 +135,7 @@ const formatDate = (d) =>
   white-space: nowrap;
 }
 .toggle input {
-  accent-color: #c25fff;
+  accent-color: var(--mp-accent);
   width: 16px;
   height: 16px;
 }

@@ -76,7 +76,7 @@ const uptime = computed(() => uptimeLabel(props.server, props.busy, props.now))
 .server-name {
   margin: 0;
   font-size: 1.25rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--mp-font-head);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -84,21 +84,21 @@ const uptime = computed(() => uptimeLabel(props.server, props.busy, props.now))
 .server-desc {
   margin: 0;
   font-size: 0.85rem;
-  color: #aaa;
+  color: var(--mp-muted);
 }
 .server-state {
   margin: 0;
   font-size: 0.85rem;
-  color: #aaa;
+  color: var(--mp-muted);
 }
 .server-state.on { color: var(--mp-success); }
 .server-state.pending,
-.server-state.warn { color: #f59e0b; }
-.server-state.error { color: #ff5555; }
+.server-state.warn { color: var(--mp-warning); }
+.server-state.error { color: var(--mp-danger); }
 .server-error {
   margin: 0;
   font-size: 0.8rem;
-  color: #ff5555;
+  color: var(--mp-danger);
 }
 
 .dot {
@@ -109,9 +109,9 @@ const uptime = computed(() => uptimeLabel(props.server, props.busy, props.now))
   flex-shrink: 0;
 }
 .dot.on { background: var(--mp-success); box-shadow: 0 0 8px var(--mp-success); }
-.dot.pending { background: #f59e0b; animation: blink 1s infinite; }
-.dot.warn { background: #f59e0b; }
-.dot.error { background: #ff5555; }
+.dot.pending { background: var(--mp-warning); animation: blink 1s infinite; }
+.dot.warn { background: var(--mp-warning); }
+.dot.error { background: var(--mp-danger); }
 
 .server-actions {
   display: flex;
@@ -122,9 +122,9 @@ const uptime = computed(() => uptimeLabel(props.server, props.busy, props.now))
 
 .btn-action {
   background: transparent;
-  border: 1px solid #444;
+  border: 1px solid var(--mp-field-border);
   border-radius: 6px;
-  color: #ccc;
+  color: var(--mp-muted);
   cursor: pointer;
   padding: 0.3rem;
   display: flex;
@@ -133,7 +133,7 @@ const uptime = computed(() => uptimeLabel(props.server, props.busy, props.now))
 }
 .btn-action:hover:not(:disabled) {
   border-color: var(--mp-accent);
-  color: var(--mp-accent);
+  color: var(--mp-accent-text);
 }
 .btn-action:disabled { opacity: 0.3; cursor: not-allowed; }
 
@@ -144,8 +144,8 @@ const uptime = computed(() => uptimeLabel(props.server, props.busy, props.now))
   height: 30px;
   padding: 0;
   border-radius: 15px;
-  border: 1px solid #555;
-  background: var(--mp-input-bg);
+  border: 1px solid var(--mp-field-border);
+  background: var(--mp-field-bg);
   cursor: pointer;
   transition: background 0.25s, border-color 0.25s;
   flex-shrink: 0;
@@ -161,7 +161,8 @@ const uptime = computed(() => uptimeLabel(props.server, props.busy, props.now))
   transition: transform 0.25s, background 0.25s;
 }
 .switch.on {
-  background: var(--mp-accent-dark);
+  background: var(--mp-accent);
+  color: var(--mp-on-accent);
   border-color: var(--mp-accent);
 }
 .switch.on .knob {

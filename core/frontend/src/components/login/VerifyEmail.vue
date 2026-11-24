@@ -4,7 +4,7 @@
       <div :key="step">
         <template v-if="step === 'done'">
           <div class="login-header">
-            <svg class="svg" viewBox="0 0 52 52" stroke="#4bb543">
+            <svg viewBox="0 0 52 52" class="svg svg-success">
               <circle class="svg-circle" cx="26" cy="26" r="25" fill="none" />
               <path class="svg-check" fill="none" d="M14 27l7 7 16-16" />
             </svg>
@@ -20,7 +20,7 @@
 
         <template v-else-if="step === 'error'">
           <div class="login-header">
-            <svg class="svg" viewBox="0 0 52 52" stroke="#e74c3c">
+            <svg viewBox="0 0 52 52" class="svg svg-error">
               <circle class="svg-circle" cx="26" cy="26" r="25" fill="none" />
               <path class="svg-cross" fill="none" d="M16 16 36 36 M36 16 16 36" />
             </svg>

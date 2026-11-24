@@ -39,8 +39,8 @@ const items = [
   font-size: 0.8em;
   transition: color 0.3s ease;
 }
-.met { color: #4bb543; }
-.unmet { color: #aaa; }
+.met { color: var(--mp-success); }
+.unmet { color: var(--mp-muted); }
 .criteria-icon {
   font-size: 0.9em;
   font-weight: 700;

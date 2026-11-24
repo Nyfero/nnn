@@ -296,7 +296,7 @@ async function handleDeletePassword(id) {
 .loading,
 .empty {
   text-align: center;
-  color: #aaa;
+  color: var(--mp-muted);
   margin-top: 3rem;
   font-size: 1.1rem;
 }

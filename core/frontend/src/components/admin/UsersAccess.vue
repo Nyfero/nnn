@@ -112,7 +112,7 @@ async function toggle(user, moduleId, checked) {
   margin: 0 auto;
 }
 .empty {
-  color: #aaa;
+  color: var(--mp-muted);
   text-align: center;
   margin-top: 3rem;
 }
@@ -127,7 +127,7 @@ th,
 td {
   padding: 0.8rem 1rem;
   text-align: center;
-  border-bottom: 1px solid #2e2e3e;
+  border-bottom: 1px solid var(--mp-divider);
 }
 th:first-child,
 td:first-child {
@@ -141,17 +141,18 @@ th {
 .th-icon {
   font-size: 1.1rem;
   vertical-align: middle;
-  color: var(--mp-accent);
+  color: var(--mp-accent-text);
 }
 .u-name {
   font-weight: 600;
 }
 .u-email {
-  color: #aaa;
+  color: var(--mp-muted);
   font-size: 0.85rem;
 }
 .badge {
-  background: var(--mp-accent-dark);
+  background: var(--mp-accent);
+  color: var(--mp-on-accent);
   font-size: 0.7rem;
   padding: 2px 6px;
   border-radius: 6px;
@@ -160,15 +161,15 @@ th {
 .cell input {
   width: 18px;
   height: 18px;
-  accent-color: #c25fff;
+  accent-color: var(--mp-accent);
   cursor: pointer;
 }
 .all {
-  color: #4bb543;
+  color: var(--mp-success);
 }
 .via {
   display: block;
   font-size: 0.65rem;
-  color: #888;
+  color: var(--mp-faint);
 }
 </style>

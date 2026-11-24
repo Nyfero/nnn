@@ -38,17 +38,17 @@ const active = computed(() => props.uploads.filter((u) => ['queued', 'encrypting
 </script>
 
 <style scoped>
-.panel { position: fixed; right: 24px; bottom: 24px; width: 340px; max-width: calc(100vw - 48px); max-height: 40vh; overflow: auto; padding: 0.8rem 1rem; background: rgba(10, 10, 10, 0.92); z-index: 500; }
+.panel { position: fixed; right: 24px; bottom: 24px; width: 340px; max-width: calc(100vw - 48px); max-height: 40vh; overflow: auto; padding: 0.8rem 1rem; background: rgba(22, 22, 30, 0.78); z-index: 500; }
 .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; font-size: 0.9rem; }
 ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; }
 .line { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; }
 .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .state { color: var(--mp-muted); white-space: nowrap; }
 .state.done { color: var(--mp-success); }
-.state.error { color: #ff5555; white-space: normal; text-align: right; }
-.track { height: 4px; border-radius: 4px; background: var(--mp-input-bg); margin-top: 4px; overflow: hidden; }
+.state.error { color: var(--mp-danger); white-space: normal; text-align: right; }
+.track { height: 4px; border-radius: 4px; background: var(--mp-field-bg); margin-top: 4px; overflow: hidden; }
 .fill { height: 100%; background: var(--mp-accent); transition: width 0.2s; }
 .icon-btn { background: none; border: none; color: var(--mp-muted); cursor: pointer; display: flex; padding: 2px; }
-.icon-btn:hover { color: var(--mp-accent); }
+.icon-btn:hover { color: var(--mp-accent-text); }
 .icon-btn .material-icons { font-size: 1.1rem; }
 </style>

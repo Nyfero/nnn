@@ -4,7 +4,7 @@
       <div class="modal-header-empty" />
       <div class="modal-header-title"><h2 class="themed-h2">{{ title }}</h2></div>
       <div class="modal-header-actions">
-        <button class="modal-close" @click="$emit('close')" tabindex="-1">
+        <button class="modal-close" type="button" aria-label="Fermer" @click="$emit('close')">
           <span class="material-icons">close</span>
         </button>
       </div>

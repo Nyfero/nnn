@@ -39,23 +39,9 @@ const tabs = [
   flex-direction: column;
   overflow: hidden;
 }
-.tabs {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem 1rem 0;
-}
-.tab {
-  background: none;
-  border: none;
-  color: #aaa;
-  font-size: 1rem;
-  padding: 0.6rem 1.2rem;
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
-}
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 16px 20px 0; }
+.tab { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid transparent; background: none; color: var(--mp-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: color 0.15s, background-color 0.15s; }
 .tab:hover { color: #fff; }
-.tab.active { color: var(--mp-accent); border-color: var(--mp-accent); }
+.tab.active { background: rgba(255, 255, 255, 0.1); border-color: var(--mp-glass-border); color: #fff; }
 .body { flex: 1; min-height: 0; overflow: auto; padding: 1rem; }
 </style>

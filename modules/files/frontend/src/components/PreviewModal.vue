@@ -4,7 +4,7 @@
       <div class="modal-header-empty" />
       <div class="modal-header-title"><h2 class="themed-h2 preview-title">{{ node.label }}</h2></div>
       <div class="modal-header-actions">
-        <button class="modal-close" @click="$emit('close')">
+        <button class="modal-close" type="button" aria-label="Fermer" @click="$emit('close')">
           <span class="material-icons">close</span>
         </button>
       </div>

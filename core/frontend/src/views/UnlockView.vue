@@ -17,7 +17,7 @@
             autofocus
           />
           <div class="input-actions">
-            <button class="toggle-password" type="button" tabindex="-1" @click="showPassword = !showPassword">
+            <button class="toggle-password" type="button" :aria-label="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'" @click="showPassword = !showPassword">
               <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>

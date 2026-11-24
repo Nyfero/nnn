@@ -80,7 +80,7 @@
 
         <template v-else>
           <div class="login-header">
-            <svg class="svg" viewBox="0 0 52 52" stroke="#4bb543">
+            <svg viewBox="0 0 52 52" class="svg svg-success">
               <circle class="svg-circle" cx="26" cy="26" r="25" fill="none" />
               <path class="svg-check" fill="none" d="M14 27l7 7 16-16" />
             </svg>

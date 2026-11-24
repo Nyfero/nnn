@@ -162,7 +162,7 @@ defineEmits(['toggle-favorite', 'edit', 'toggle-show', 'copy', 'delete'])
 
 .password-note {
   font-size: 0.85rem;
-  color: #aaa;
+  color: var(--mp-muted);
   font-style: italic;
   white-space: nowrap;
   overflow: hidden;
@@ -180,9 +180,9 @@ defineEmits(['toggle-favorite', 'edit', 'toggle-show', 'copy', 'delete'])
 
 .btn-action {
   background: transparent;
-  border: 1px solid #444;
+  border: 1px solid var(--mp-field-border);
   border-radius: 6px;
-  color: #ccc;
+  color: var(--mp-muted);
   cursor: pointer;
   padding: 0.3rem;
   transition: all 0.2s;
@@ -194,7 +194,7 @@ defineEmits(['toggle-favorite', 'edit', 'toggle-show', 'copy', 'delete'])
   color: #c25fff;
 }
 .btn-delete:hover {
-  border-color: #ff5555;
-  color: #ff5555;
+  border-color: var(--mp-danger);
+  color: var(--mp-danger);
 }
 </style>

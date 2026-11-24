@@ -361,16 +361,16 @@ async function onMoveDrop(targetId) {
 .crumbs { flex: 1; min-width: 200px; display: flex; align-items: center; flex-wrap: wrap; gap: 2px; margin: 0; }
 .crumbs.note { color: var(--mp-muted); font-size: 0.85rem; }
 .crumb { background: none; border: 1px solid transparent; color: #fff; border-radius: 8px; padding: 4px 8px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.95rem; }
-.crumb:hover, .crumb.over { color: var(--mp-accent); border-color: var(--mp-accent); }
-.crumb .lock { font-size: 1rem; color: var(--mp-accent); }
+.crumb:hover, .crumb.over { color: var(--mp-accent-text); border-color: var(--mp-accent); }
+.crumb .lock { font-size: 1rem; color: var(--mp-accent-text); }
 .sep { color: var(--mp-muted); }
 .search { width: 220px; margin: 0; }
 .tool { width: auto; gap: 0.4rem; padding: 10px 16px; font-size: 0.95rem; }
 .tool:disabled { opacity: 0.4; cursor: not-allowed; }
 .tool .material-icons { font-size: 1.2rem; }
 
-.vault-banner { display: flex; gap: 0.6rem; align-items: flex-start; font-size: 0.82rem; line-height: 1.4; color: #ddd; background: rgba(194, 95, 255, 0.1); border: 1px solid rgba(194, 95, 255, 0.35); border-radius: 10px; padding: 0.6rem 0.9rem; margin: 0 0 0.8rem; }
-.vault-banner .material-icons { font-size: 1.1rem; color: var(--mp-accent); }
+.vault-banner { display: flex; gap: 0.6rem; align-items: flex-start; font-size: 0.82rem; line-height: 1.4; color: #ddd; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--mp-glass-border-strong); border-radius: 10px; padding: 0.6rem 0.9rem; margin: 0 0 0.8rem; }
+.vault-banner .material-icons { font-size: 1.1rem; color: var(--mp-accent-text); }
 
 .state { text-align: center; color: var(--mp-muted); margin-top: 3rem; }
 .list { flex: 1; min-height: 0; overflow-y: auto; }
@@ -378,26 +378,26 @@ async function onMoveDrop(targetId) {
 .row-head { color: var(--mp-muted); font-size: 0.8rem; position: sticky; top: 0; background: #000; z-index: 1; }
 .item { cursor: pointer; border: 1px solid transparent; }
 .item.trashed { cursor: default; }
-.item:hover { background: var(--mp-input-bg); }
-.item.over { border-color: var(--mp-accent); background: rgba(194, 95, 255, 0.12); }
+.item:hover { background: var(--mp-field-bg); }
+.item.over { border-color: var(--mp-accent); background: rgba(255, 255, 255, 0.08); }
 .item.dragging { opacity: 0.4; }
 .c-name { display: flex; align-items: center; gap: 0.7rem; min-width: 0; }
 .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .kind { color: var(--mp-muted); }
-.kind.folder { color: var(--mp-highlight); }
-.kind.vault { color: var(--mp-accent); }
-.mini-lock { font-size: 0.9rem; color: var(--mp-accent); opacity: 0.8; }
+.kind.folder { color: var(--mp-accent-text); }
+.kind.vault { color: var(--mp-accent-text); }
+.mini-lock { font-size: 0.9rem; color: var(--mp-accent-text); opacity: 0.8; }
 .c-size, .c-date { font-size: 0.85rem; color: var(--mp-muted); }
 .c-date small { font-size: 0.75rem; }
 .c-actions { display: flex; justify-content: flex-end; gap: 4px; opacity: 0; transition: opacity 0.15s; }
 .item:hover .c-actions, .item:focus-within .c-actions { opacity: 1; }
-.act { background: transparent; border: 1px solid #444; border-radius: 6px; color: #ccc; cursor: pointer; padding: 3px; display: flex; }
+.act { background: transparent; border: 1px solid var(--mp-field-border); border-radius: 6px; color: var(--mp-muted); cursor: pointer; padding: 3px; display: flex; }
 .act .material-icons { font-size: 1.15rem; }
-.act:hover { border-color: var(--mp-accent); color: var(--mp-accent); }
-.act.danger:hover { border-color: #ff5555; color: #ff5555; }
+.act:hover { border-color: var(--mp-accent); color: var(--mp-accent-text); }
+.act.danger:hover { border-color: var(--mp-danger); color: var(--mp-danger); }
 
 .drop-overlay { position: absolute; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1.2rem; background: rgba(0, 0, 0, 0.82); border: 2px dashed var(--mp-accent); border-radius: 22px; pointer-events: none; }
-.drop-overlay .material-icons { font-size: 3rem; color: var(--mp-accent); }
+.drop-overlay .material-icons { font-size: 3rem; color: var(--mp-accent-text); }
 
 @media (max-width: 800px) {
   .row { grid-template-columns: minmax(0, 1fr) 80px; }

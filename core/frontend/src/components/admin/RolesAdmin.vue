@@ -122,7 +122,7 @@ const setQuota = (role, value) =>
   margin: 0 auto;
 }
 .empty {
-  color: #aaa;
+  color: var(--mp-muted);
   text-align: center;
   margin-top: 3rem;
 }
@@ -133,9 +133,9 @@ const setQuota = (role, value) =>
 }
 .role-card {
   padding: 1rem 1.5rem;
-  border-radius: 12px;
-  background: #1e1e2e;
-  border: 1px solid #2e2e3e;
+  border-radius: var(--mp-radius-row);
+  background: var(--mp-glass-bg);
+  border: 1px solid var(--mp-glass-border);
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
@@ -148,10 +148,10 @@ const setQuota = (role, value) =>
 .r-name {
   font-weight: 700;
   font-size: 1.05rem;
-  color: var(--mp-accent);
+  color: var(--mp-accent-text);
 }
 .r-desc {
-  color: #888;
+  color: var(--mp-faint);
   font-size: 0.85rem;
   margin: 0;
 }
@@ -169,13 +169,13 @@ const setQuota = (role, value) =>
   cursor: pointer;
 }
 .toggle input {
-  accent-color: #c25fff;
+  accent-color: var(--mp-accent);
   width: 16px;
   height: 16px;
 }
 .th-icon {
   font-size: 1.1rem;
-  color: var(--mp-accent);
+  color: var(--mp-accent-text);
 }
 .quota {
   display: flex;

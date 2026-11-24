@@ -148,11 +148,12 @@ function goRecovery({ token, password }) {
 
 .version {
   position: fixed;
-  bottom: 30px;
-  right: 50px;
+  bottom: 20px;
+  right: 24px;
   z-index: 100;
   cursor: default;
-  color: grey;
+  font-size: 13px;
+  color: var(--mp-faint);
 }
 
 .slide-left-enter-active,

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import api from '@/services/api'
+import { applyAccent } from '@myprout/ui'
 import {
   clearMasterKey,
   hasMasterKey,
@@ -23,6 +24,25 @@ export const useAuthStore = defineStore('auth', {
       this.token = token
       this.user = user
       this.isAuthenticated = true
+      // Couleur d'accent du compte (retrouvée sur tous les appareils)
+      applyAccent(user?.theme_accent ?? null)
+    },
+
+    // Préférence d'accent : appliquée tout de suite, annulée si l'API refuse.
+    // null = retour au violet par défaut.
+    async saveAccent(hex) {
+      const previous = this.user?.theme_accent ?? null
+      this.user.theme_accent = hex
+      applyAccent(hex)
+      try {
+        const { data } = await api.put('/auth/preferences', { theme_accent: hex })
+        this.user.theme_accent = data.theme_accent
+        applyAccent(data.theme_accent)
+      } catch (e) {
+        this.user.theme_accent = previous
+        applyAccent(previous)
+        throw e
+      }
     },
 
     // Au chargement : session via le cookie de refresh + présence de la clé maître

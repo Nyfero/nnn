@@ -3,32 +3,42 @@
     <transition name="fade" mode="out-in">
       <div :key="submitted ? 'done' : 'register'">
         <template v-if="!submitted">
+          <div class="login-brand">Myprout</div>
           <div class="login-header">
             <h2 class="themed-h2">Créer un compte</h2>
           </div>
           <div class="login-body">
             <form @submit.prevent="register">
-              <input
-                class="themed-input"
-                v-model="form.lastName"
-                type="text"
-                placeholder="Nom"
-                required
-              />
-              <input
-                class="themed-input"
-                v-model="form.firstName"
-                type="text"
-                placeholder="Prénom"
-                required
-              />
-              <input
-                class="themed-input"
-                v-model="form.email"
-                type="email"
-                placeholder="E-mail"
-                required
-              />
+              <div class="form-group">
+                <label class="themed-label" for="register-lastName">Nom</label>
+                <input
+                  id="register-lastName"
+                  class="themed-input"
+                  v-model="form.lastName"
+                  type="text"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label class="themed-label" for="register-firstName">Prénom</label>
+                <input
+                  id="register-firstName"
+                  class="themed-input"
+                  v-model="form.firstName"
+                  type="text"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label class="themed-label" for="register-email">E-mail</label>
+                <input
+                  id="register-email"
+                  class="themed-input"
+                  v-model="form.email"
+                  type="email"
+                  required
+                />
+              </div>
               <p v-if="emailTaken" class="form-error">
                 Cette adresse e-mail est déjà utilisée. S'il s'agit d'une
                 erreur,
@@ -49,7 +59,7 @@
                   {{ isLoading ? 'En cours...' : "S'inscrire" }}
                 </button>
                 <button
-                  class="themed-button button-secondary"
+                  class="text-link"
                   type="button"
                   @click="$emit('switch')"
                 >
@@ -62,7 +72,7 @@
 
         <template v-else>
           <div class="login-header">
-            <svg class="svg" viewBox="0 0 52 52" stroke="#4bb543">
+            <svg viewBox="0 0 52 52" class="svg svg-success">
               <circle class="svg-circle" cx="26" cy="26" r="25" fill="none" />
               <path class="svg-check" fill="none" d="M14 27l7 7 16-16" />
             </svg>
@@ -131,7 +141,7 @@ async function register() {
 
 <style scoped>
 .contact-link {
-  color: var(--mp-accent);
+  color: var(--mp-accent-text);
   text-decoration: underline;
 }
 </style>

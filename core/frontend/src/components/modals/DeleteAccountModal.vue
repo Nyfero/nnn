@@ -4,7 +4,7 @@
       <div class="modal-header-empty" />
       <div class="modal-header-title"><h2 class="themed-h2">Supprimer le compte</h2></div>
       <div class="modal-header-actions">
-        <button class="modal-close" @click="$emit('close')" tabindex="-1">
+        <button class="modal-close" type="button" aria-label="Fermer" @click="$emit('close')">
           <span class="material-icons">close</span>
         </button>
       </div>
@@ -26,7 +26,7 @@
         <div class="form-wrapper">
           <input class="themed-input" v-model="form.password" :type="showPassword ? 'text' : 'password'" autocomplete="current-password" required />
           <div class="input-actions">
-            <button class="toggle-password" type="button" tabindex="-1" @click="showPassword = !showPassword">
+            <button class="toggle-password" type="button" :aria-label="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'" @click="showPassword = !showPassword">
               <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
@@ -96,6 +96,6 @@ function handleSubmit() {
   border: 1px solid color-mix(in srgb, var(--mp-danger) 30%, transparent);
 }
 .warning-icon { color: var(--mp-danger); font-size: 24px; flex-shrink: 0; }
-.field-error { font-size: 0.78rem; color: #ff5555; }
-.input-error { border-color: #ff5555 !important; }
+.field-error { font-size: 0.78rem; color: var(--mp-danger); }
+.input-error { border-color: var(--mp-danger) !important; }
 </style>

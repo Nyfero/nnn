@@ -68,25 +68,26 @@ const formatDate = (d) =>
 
 <style scoped>
 .admin-section { max-width: 800px; margin: 0 auto; }
-.empty { color: #aaa; text-align: center; margin-top: 3rem; }
+.empty { color: var(--mp-muted); text-align: center; margin-top: 3rem; }
 .users-list { display: flex; flex-direction: column; gap: 1rem; }
 .user-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.2rem 1.5rem;
-  border-radius: 12px;
-  background: #1e1e2e;
-  border: 1px solid #2e2e3e;
+  border-radius: var(--mp-radius-row);
+  background: var(--mp-glass-bg);
+  border: 1px solid var(--mp-glass-border);
 }
 .user-info { display: flex; flex-direction: column; gap: 0.3rem; }
 .user-name { font-weight: 600; }
-.user-email { color: #aaa; font-size: 0.9rem; }
-.user-date { color: #666; font-size: 0.8rem; }
+.user-email { color: var(--mp-muted); font-size: 0.9rem; }
+.user-date { color: var(--mp-faint); font-size: 0.8rem; }
 .user-actions { display: flex; gap: 0.8rem; }
-.btn { padding: 0.5rem 1rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; color: #fff; transition: opacity 0.2s; }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn:hover:not(:disabled) { opacity: 0.85; }
-.btn-approve { background: #22c55e; }
-.btn-reject { background: #ef4444; }
+.btn { min-height: 40px; padding: 0 16px; border: 1px solid transparent; border-radius: var(--mp-radius-control); cursor: pointer; font-weight: 600; font-size: 14px; transition: filter 0.15s, border-color 0.15s; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-approve { background: var(--mp-accent); color: var(--mp-on-accent); }
+.btn-approve:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-reject { background: rgba(248, 113, 113, 0.12); border-color: rgba(248, 113, 113, 0.3); color: var(--mp-danger); }
+.btn-reject:hover:not(:disabled) { border-color: rgba(248, 113, 113, 0.55); }
 </style>

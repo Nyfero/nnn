@@ -103,7 +103,7 @@ async function toggle(user, role, event) {
   margin: 0 auto;
 }
 .empty {
-  color: #aaa;
+  color: var(--mp-muted);
   text-align: center;
   margin-top: 3rem;
 }
@@ -118,7 +118,7 @@ th,
 td {
   padding: 0.8rem 1rem;
   text-align: center;
-  border-bottom: 1px solid #2e2e3e;
+  border-bottom: 1px solid var(--mp-divider);
 }
 th:first-child,
 td:first-child {
@@ -133,13 +133,13 @@ th {
   font-weight: 600;
 }
 .u-email {
-  color: #aaa;
+  color: var(--mp-muted);
   font-size: 0.85rem;
 }
 .cell input {
   width: 18px;
   height: 18px;
-  accent-color: #c25fff;
+  accent-color: var(--mp-accent);
   cursor: pointer;
 }
 .cell input:disabled {

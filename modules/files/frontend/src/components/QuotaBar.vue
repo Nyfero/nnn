@@ -28,8 +28,8 @@ const ratio = computed(() =>
 .quota-text { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.85rem; margin-bottom: 6px; }
 .quota-trash { font-size: 0.78rem; color: var(--mp-muted); margin: -2px 0 6px; }
 .quota-total { color: var(--mp-muted); }
-.quota-track { height: 8px; border-radius: 8px; background: var(--mp-input-bg); overflow: hidden; }
-.quota-fill { height: 100%; border-radius: 8px; background: linear-gradient(90deg, var(--mp-accent), var(--mp-accent-dark)); transition: width 0.4s; }
-.quota-fill.warn { background: #f59e0b; }
+.quota-track { height: 8px; border-radius: 8px; background: var(--mp-field-bg); overflow: hidden; }
+.quota-fill { height: 100%; border-radius: 8px; background: var(--mp-accent); transition: width 0.4s; }
+.quota-fill.warn { background: var(--mp-warning); }
 .quota-fill.full { background: var(--mp-danger); }
 </style>

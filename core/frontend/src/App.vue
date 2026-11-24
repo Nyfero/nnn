@@ -1,10 +1,10 @@
 <template>
-  <DustParticles />
   <AppShell
-    :show-navbar="auth.isAuthenticated && route.name !== 'Login'"
+    :show-sidebar="auth.isAuthenticated && route.name !== 'Login'"
     :is-admin="auth.isAdmin"
     :modules="auth.user?.modules ?? []"
     :active="active"
+    :version="version"
     @navigate="onNavigate"
   >
     <router-view />
@@ -17,11 +17,11 @@ import { useRoute, useRouter } from 'vue-router'
 import { AppShell } from '@myprout/ui'
 import { createInactivityGuard } from '@myprout/sdk/client'
 import { useAuthStore } from '@/stores/authStore'
-import DustParticles from '../../../packages/ui/src/components/DustParticles.vue'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const version = __APP_VERSION__
 
 const active = computed(
   () =>

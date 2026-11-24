@@ -17,7 +17,7 @@
       </div>
 
       <div class="modal-header-actions">
-        <button class="modal-close" @click="$emit('close')">
+        <button class="modal-close" type="button" aria-label="Fermer" @click="$emit('close')">
           <span class="material-icons">close</span>
         </button>
       </div>
@@ -291,7 +291,7 @@ function handleKeydown(e) {
   border: 1px solid transparent;
 }
 .btn-delete:hover {
-  border-color: #ff5555;
-  color: #ff5555;
+  border-color: var(--mp-danger);
+  color: var(--mp-danger);
 }
 </style>

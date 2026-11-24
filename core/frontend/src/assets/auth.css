@@ -1,41 +1,92 @@
-/* Styles communs aux écrans de connexion / inscription / récupération */
+/* Styles communs aux écrans de connexion / inscription / récupération / déverrouillage */
 
 .login-card {
-  width: 400px;
-  max-width: 92vw;
-  text-align: center;
-  padding: 32px;
+  width: 420px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 36px 34px 30px;
+  border-radius: var(--mp-radius-panel);
+  text-align: left;
+}
+
+.login-card .login-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  font-family: var(--mp-font-head);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: var(--mp-text);
+}
+.login-card .login-brand::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--mp-accent);
 }
 
 .login-card .login-header {
-  text-align: center;
-  margin-bottom: 1.5em;
+  margin-bottom: 1.4em;
+}
+.login-card .login-header .themed-h2 {
+  font-size: 28px;
+  margin: 0;
 }
 
 .login-card .login-subtitle {
-  font-size: 0.85em;
-  color: #aaa;
-  margin-top: 0.4em;
+  font-size: 14px;
+  color: var(--mp-muted);
+  margin: 0.6em 0 0;
+  line-height: 1.5;
 }
 
-.login-card .login-body {
+.login-card .login-body,
+.login-card .login-body > form {
   display: flex;
   flex-direction: column;
-  gap: 0.8em;
+  gap: 0.9em;
 }
 
 .login-card .login-footer {
   display: flex;
   flex-direction: column;
-  gap: 0.6em;
-  margin-top: 1em;
+  align-items: stretch;
+  gap: 0.8em;
+  margin-top: 1.2em;
+}
+
+/* Lien texte (« Créer un compte », « Retour ») centré sous le bouton principal */
+.login-card .text-link {
+  align-self: center;
+  background: none;
+  border: none;
+  padding: 10px 6px;
+  min-height: 44px;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mp-accent-text);
+  cursor: pointer;
+  text-decoration: none;
+}
+.login-card .text-link:hover {
+  text-decoration: underline;
 }
 
 .login-card .info-text {
-  font-size: 0.9em;
-  color: grey;
+  font-size: 14px;
+  color: var(--mp-muted);
   line-height: 1.5;
-  text-align: center;
+  margin: 0;
+}
+
+.login-card p {
+  line-height: 1.5;
 }
 
 /* Transition entre les étapes d'une carte */
@@ -58,6 +109,12 @@
   margin: 0 auto 20px auto;
   border-radius: 50%;
 }
+.login-card .svg.svg-success {
+  stroke: var(--mp-success);
+}
+.login-card .svg.svg-error {
+  stroke: var(--mp-danger);
+}
 .login-card .svg-circle {
   stroke-dasharray: 166;
   stroke-dashoffset: 166;
@@ -74,6 +131,9 @@
     stroke-dashoffset: 0;
   }
 }
+.login-card .login-header:has(.svg) {
+  text-align: center;
+}
 
 /* Questions de sécurité */
 .login-card .question-block {
@@ -81,41 +141,21 @@
   flex-direction: column;
   gap: 0.5em;
   padding: 1em;
-  border: 1px solid #333;
-  border-radius: 8px;
-  margin-bottom: 0.8em;
+  border: 1px solid var(--mp-divider);
+  border-radius: var(--mp-radius-control);
 }
 
 .login-card .question-label {
-  font-size: 0.8em;
+  font-size: 12px;
   font-weight: 600;
-  color: #aaa;
+  color: var(--mp-muted);
   margin: 0;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .login-card .form-wrapper .char-counter {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
-}
-
-.login-card .themed-select {
-  width: 100%;
-  appearance: none;
-  background: var(--mp-input-bg);
-  color: #fff;
-  border: 1px solid #444;
-  border-radius: 6px;
-  padding: 0.6em 2em 0.6em 0.8em;
-  font-size: 0.9em;
-  cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23aaa'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.7em center;
-}
-.login-card .themed-select:focus {
-  outline: none;
-  border-color: var(--mp-accent);
+  bottom: 18px;
+  right: 12px;
 }

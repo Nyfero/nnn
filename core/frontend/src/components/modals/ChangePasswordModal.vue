@@ -4,7 +4,7 @@
       <div class="modal-header-empty" />
       <div class="modal-header-title"><h2 class="themed-h2">Modifier le mot de passe</h2></div>
       <div class="modal-header-actions">
-        <button class="modal-close" @click="$emit('close')" tabindex="-1">
+        <button class="modal-close" type="button" aria-label="Fermer" @click="$emit('close')">
           <span class="material-icons">close</span>
         </button>
       </div>
@@ -16,7 +16,7 @@
         <div class="form-wrapper">
           <input class="themed-input" v-model="form.oldPassword" :type="showOld ? 'text' : 'password'" autocomplete="current-password" required />
           <div class="input-actions">
-            <button class="toggle-password" type="button" tabindex="-1" @click="showOld = !showOld">
+            <button class="toggle-password" type="button" :aria-label="showOld ? 'Masquer le mot de passe' : 'Afficher le mot de passe'" @click="showOld = !showOld">
               <span class="material-icons">{{ showOld ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
@@ -30,7 +30,7 @@
         <div class="form-wrapper">
           <input class="themed-input" v-model="form.newPassword" :type="showNew ? 'text' : 'password'" autocomplete="new-password" required />
           <div class="input-actions">
-            <button class="toggle-password" type="button" tabindex="-1" @click="showNew = !showNew">
+            <button class="toggle-password" type="button" :aria-label="showNew ? 'Masquer le mot de passe' : 'Afficher le mot de passe'" @click="showNew = !showNew">
               <span class="material-icons">{{ showNew ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
@@ -49,7 +49,7 @@
             required
           />
           <div class="input-actions">
-            <button class="toggle-password" type="button" tabindex="-1" @click="showConfirm = !showConfirm">
+            <button class="toggle-password" type="button" :aria-label="showConfirm ? 'Masquer le mot de passe' : 'Afficher le mot de passe'" @click="showConfirm = !showConfirm">
               <span class="material-icons">{{ showConfirm ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
@@ -109,6 +109,6 @@ function handleSubmit() {
 </script>
 
 <style scoped>
-.field-error { font-size: 0.78rem; color: #ff5555; margin-top: 2px; }
-.input-error { border-color: #ff5555 !important; }
+.field-error { font-size: 0.78rem; color: var(--mp-danger); margin-top: 2px; }
+.input-error { border-color: var(--mp-danger) !important; }
 </style>

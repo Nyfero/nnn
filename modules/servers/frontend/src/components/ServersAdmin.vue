@@ -161,7 +161,7 @@ async function remove(server) {
   padding: 10px 20px;
 }
 .empty {
-  color: #aaa;
+  color: var(--mp-muted);
   text-align: center;
   margin-top: 3rem;
 }
@@ -176,8 +176,8 @@ async function remove(server) {
   gap: 0.8rem;
   padding: 1rem 1.5rem;
   border-radius: 12px;
-  background: #1e1e2e;
-  border: 1px solid #2e2e3e;
+  background: var(--mp-glass-bg);
+  border: 1px solid var(--mp-glass-border);
 }
 .info {
   flex: 1;
@@ -191,20 +191,20 @@ async function remove(server) {
   font-size: 1.05rem;
 }
 .meta {
-  color: #888;
+  color: var(--mp-faint);
   font-size: 0.8rem;
 }
 .meta.bad {
-  color: #ff5555;
+  color: var(--mp-danger);
 }
 .mono {
   font-family: monospace;
 }
 .icon-btn {
   background: transparent;
-  border: 1px solid #444;
+  border: 1px solid var(--mp-field-border);
   border-radius: 6px;
-  color: #ccc;
+  color: var(--mp-muted);
   cursor: pointer;
   padding: 0.3rem;
   display: flex;
@@ -212,10 +212,10 @@ async function remove(server) {
 }
 .icon-btn:hover {
   border-color: var(--mp-accent);
-  color: var(--mp-accent);
+  color: var(--mp-accent-text);
 }
 .icon-btn.danger:hover {
-  border-color: #ff5555;
-  color: #ff5555;
+  border-color: var(--mp-danger);
+  color: var(--mp-danger);
 }
 </style>

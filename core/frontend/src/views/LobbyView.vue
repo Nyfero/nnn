@@ -17,8 +17,11 @@
         :href="`${m.path}/`"
         class="themed-card module-card"
       >
-        <span class="material-icons module-icon">{{ m.icon }}</span>
+        <span class="module-badge" aria-hidden="true">
+          <span class="material-icons module-icon">{{ m.icon }}</span>
+        </span>
         <span class="module-name">{{ m.name }}</span>
+        <span class="material-icons module-arrow" aria-hidden="true">arrow_forward</span>
       </a>
     </div>
   </div>
@@ -47,45 +50,68 @@ onMounted(async () => {
 
 <style scoped>
 .lobby {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 1rem;
+  max-width: 1100px;
 }
 .lobby-info {
-  color: #aaa;
-  text-align: center;
-  margin-top: 3rem;
+  color: var(--mp-muted);
+  margin-top: 2rem;
   line-height: 1.6;
 }
 .module-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+  margin-top: 8px;
 }
 .module-card {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  height: 180px;
-  color: #fff;
+  gap: 16px;
+  padding: 22px;
+  color: var(--mp-text);
   text-decoration: none;
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 .module-card:hover {
-  border-color: var(--mp-accent);
+  border-color: var(--mp-glass-border-strong);
   transform: translateY(-4px);
-  box-shadow: 0 0 18px rgba(194, 95, 255, 0.35);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+.module-badge {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--mp-glass-border);
 }
 .module-icon {
-  font-size: 3rem;
-  color: var(--mp-accent);
+  font-size: 28px;
+  color: var(--mp-accent-text);
 }
 .module-name {
-  font-size: 1.2rem;
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mp-font-head);
+  font-size: 18px;
   font-weight: 600;
-  font-family: 'Poppins', sans-serif;
+  letter-spacing: -0.01em;
+}
+.module-arrow {
+  font-size: 20px;
+  color: var(--mp-faint);
+  transition:
+    transform 0.2s,
+    color 0.2s;
+}
+.module-card:hover .module-arrow {
+  color: var(--mp-text);
+  transform: translateX(3px);
 }
 </style>

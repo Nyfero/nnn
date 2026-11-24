@@ -1,17 +1,20 @@
 <template>
-  <div class="themed-card admin-page">
-    <div class="admin-tabs">
+  <div class="admin-page">
+    <h1 class="themed-h1">Administration</h1>
+    <div class="admin-tabs" role="tablist">
       <button
         v-for="t in tabs"
         :key="t.id"
         class="admin-tab"
+        role="tab"
+        :aria-selected="tab === t.id"
         :class="{ active: tab === t.id }"
         @click="tab = t.id"
       >
         {{ t.label }}
       </button>
     </div>
-    <div class="admin-body">
+    <div class="themed-card admin-body">
       <PendingUsers v-if="tab === 'pending'" />
       <UsersAccess v-else-if="tab === 'users'" />
       <UsersRoles v-else-if="tab === 'roles'" />
@@ -44,37 +47,40 @@ const tabs = [
   height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  min-height: 0;
 }
 .admin-tabs {
   display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem 1rem 0;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
 }
 .admin-tab {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid transparent;
   background: none;
-  border: none;
-  color: #aaa;
-  font-size: 1rem;
-  padding: 0.6rem 1.2rem;
-  border-bottom: 2px solid transparent;
+  color: var(--mp-muted);
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   transition:
-    color 0.2s,
-    border-color 0.2s;
+    color 0.15s,
+    background-color 0.15s;
 }
 .admin-tab:hover {
   color: #fff;
 }
 .admin-tab.active {
-  color: var(--mp-accent);
-  border-color: var(--mp-accent);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--mp-glass-border);
+  color: #fff;
 }
 .admin-body {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  padding: 1rem;
+  padding: 24px;
 }
 </style>

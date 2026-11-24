@@ -6,7 +6,7 @@
         <h2 class="themed-h2">{{ server ? 'Modifier le serveur' : 'Nouveau serveur' }}</h2>
       </div>
       <div class="modal-header-actions">
-        <button class="modal-close" @click="$emit('close')" tabindex="-1">
+        <button class="modal-close" type="button" aria-label="Fermer" @click="$emit('close')">
           <span class="material-icons">close</span>
         </button>
       </div>
@@ -93,11 +93,11 @@ function submit() {
 
 <style scoped>
 .mono { font-family: monospace; }
-.hint { font-size: 0.78rem; color: #888; margin: 0.2rem 0 0; }
+.hint { font-size: 0.78rem; color: var(--mp-faint); margin: 0.2rem 0 0; }
 .users {
   max-height: 180px;
   overflow-y: auto;
-  border: 1px solid #333;
+  border: 1px solid var(--mp-field-border);
   border-radius: 8px;
   padding: 0.4rem 0.8rem;
 }
@@ -109,6 +109,6 @@ function submit() {
   cursor: pointer;
   font-size: 0.9rem;
 }
-.user-row input { accent-color: #c25fff; width: 16px; height: 16px; }
-.email { color: #888; font-size: 0.8rem; margin-left: auto; }
+.user-row input { accent-color: var(--mp-accent); width: 16px; height: 16px; }
+.email { color: var(--mp-faint); font-size: 0.8rem; margin-left: auto; }
 </style>

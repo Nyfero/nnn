@@ -21,7 +21,7 @@
                   required
                 />
                 <div class="input-actions">
-                  <button class="toggle-password" type="button" @click="showPassword = !showPassword">
+                  <button class="toggle-password" type="button" :aria-label="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'" @click="showPassword = !showPassword">
                     <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
                   </button>
                 </div>
@@ -39,7 +39,7 @@
                   required
                 />
                 <div class="input-actions">
-                  <button class="toggle-password" type="button" @click="showConfirm = !showConfirm">
+                  <button class="toggle-password" type="button" :aria-label="showConfirm ? 'Masquer le mot de passe' : 'Afficher le mot de passe'" @click="showConfirm = !showConfirm">
                     <span class="material-icons">{{ showConfirm ? 'visibility_off' : 'visibility' }}</span>
                   </button>
                 </div>
@@ -58,7 +58,7 @@
 
         <template v-else-if="step === 'done'">
           <div class="login-header">
-            <svg class="svg" viewBox="0 0 52 52" stroke="#4bb543">
+            <svg viewBox="0 0 52 52" class="svg svg-success">
               <circle class="svg-circle" cx="26" cy="26" r="25" fill="none" />
               <path class="svg-check" fill="none" d="M14 27l7 7 16-16" />
             </svg>
