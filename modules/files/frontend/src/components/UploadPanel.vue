@@ -13,8 +13,7 @@
         <div class="line">
           <span class="name" :title="u.name">{{ u.name }}</span>
           <span class="state" :class="u.status">
-            <template v-if="u.status === 'encrypting'">Chiffrement {{ Math.round(u.progress * 100) }} %  </Teleport>
-</template>
+            <template v-if="u.status === 'encrypting'">Chiffrement {{ Math.round(u.progress * 100) }} %</template>
             <template v-else-if="u.status === 'uploading'">{{ Math.round(u.progress * 100) }} %</template>
             <template v-else-if="u.status === 'queued'">En attente</template>
             <template v-else-if="u.status === 'done'">Terminé</template>
@@ -29,6 +28,7 @@
       </li>
     </ul>
   </aside>
+  </Teleport>
 </template>
 
 <script setup>

@@ -11,6 +11,7 @@ Aucune base ni Docker requis. `npm test` lance les tests de chaque workspace ; p
 Chaque module a ses tests (backend en `test/*.test.ts` via `tsx`, frontend en `test/*.test.mjs` pour la logique JS pure). La logique testable vit dans des fichiers sans Prisma ni Vue (`src/utils/`), les routes et composants ne font que l'assembler. Voir le skill `module-tests` (`.claude/skills/`).
 
 - `packages/sdk/test/vault.test.mjs` : une clé maître chiffrée côté navigateur est lisible côté serveur et inversement (le seed admin) ; changement de mot de passe, récupération par réponses, dérivation HKDF par module.
+- `packages/ui/test/accent.test.mjs` : couleur d'accent (validation, contraste ≥ 4.5:1 des presets, du blanc, du noir et de tous les gris, script anti-flash).
 - `packages/sdk/test/server.test.mjs` : `coreAuth` (accepté, refusé, 403, cache, core injoignable), `registerModule`, `requireModuleSecret`, contre un faux core.
 - `core/backend/test/` :
   - `validators.test.ts` : formats des blobs et sels, 3 questions exactement, normalisation des réponses identique client/serveur, cohérence des durées de vie.
@@ -22,13 +23,13 @@ Chaque module a ses tests (backend en `test/*.test.ts` via `tsx`, frontend en `t
 - `modules/files/` : backend `units.test.ts`, frontend `vault.test.mjs`.
 
 ## Tests de bout en bout (`npm run test:e2e`)
-26 étapes enchaînées sur la vraie pile :
+27 étapes enchaînées sur la vraie pile :
 
 1. inscription, vérification d'email, validation par l'admin, activation (clé maître créée **côté client**) ;
 2. connexion, cookie de refresh `HttpOnly` / `SameSite=Strict`, routes admin protégées ;
 3. accès aux modules : refusé, puis accordé par l'admin, lobby ;
 4. module passwords : données chiffrées côté client (le serveur ne voit jamais le secret), CRUD, favoris, **isolation entre comptes**, logo, routes internes bloquées par le proxy ;
-5. sessions : rotation du refresh token, tolérance de 30 s, révocation (core immédiat, module après le cache de 5 s) ;
+5. sessions : rotation du refresh token, tolérance de 30 s, révocation (core immédiat, module après le cache de 5 s) ; couleur d'accent (validation, persistance, autre appareil, script anti-flash servi par le core et le module) ;
 6. changement de mot de passe : même clé maître, autres appareils déconnectés, données toujours lisibles ;
 7. mot de passe oublié : pas d'énumération, questions de sécurité obligatoires, clé maître retrouvée côté client, lien à usage unique, sessions révoquées ;
 8. suppression de compte : admin protégé, mot de passe exigé, **données du module purgées**.

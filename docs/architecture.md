@@ -19,6 +19,7 @@
 | Enregistrement   | `POST {CORE_URL}/api/core/modules/register` au démarrage (header `X-Module-Secret`)   |
 | Auth             | `POST {CORE_URL}/api/core/introspect` avec le Bearer de l'utilisateur                 |
 | Crypto           | clé dérivée de la clé maître : `HKDF(master_key, "module:<id>")`                      |
+| Interface        | `AppShell` + thème `@myprout/ui`, accent de l'utilisateur : voir [theme.md](theme.md)  |
 
 ## Ajouter un module
 
@@ -44,10 +45,10 @@ exposé aux modules par `/introspect` (`storage_quota_mb`, `roles`) et par le SD
 Défauts (`config.ts`, appliqués une fois) : ADMIN, USER (passwords), FAMILLE (tout sauf `server`, 2 Go),
 GAMER (`server`), AMIS (tout sauf `server`, 1 Go).
 
-## Background partagé
+## Background partagé et thème
 
-`DustParticles` vit dans `@myprout/ui`. Le core et chaque module le montent dans leur `App.vue`,
-ce qui garantit un fond identique partout. Core et modules étant des applications distinctes,
+`DustParticles` vit dans `@myprout/ui` et est rendu par `AppShell`, que le core et chaque module utilisent :
+le fond est donc identique partout. Charte, jetons, barre latérale et couleur d'accent : [theme.md](theme.md). Core et modules étant des applications distinctes,
 l'animation redémarre au changement d'application (positions aléatoires : l'effet est quasi invisible).
 
 ## API du core (`/api/core`)
@@ -57,6 +58,7 @@ l'animation redémarre au changement d'application (positions aléatoires : l'ef
 | `POST /auth/register`, `/verify-email`, `/activate`                                                          | public               | inscription, activation (le client envoie les blobs de clé maître) |
 | `POST /auth/login`, `/refresh`, `/logout`                                                                    | public               | sessions (cookie refresh limité à `/api/core/auth`)                |
 | `PUT /auth/password`, `POST /auth/password/verify`                                                           | user                 | changement de mot de passe (blob rechiffré par le client)          |
+| `PUT /auth/preferences`                                                                                      | user                 | couleur d'accent `{ theme_accent: "#rrggbb" \| null }`             |
 | `POST /auth/password/forgot`, `GET /auth/recovery`, `POST /auth/recovery/verify`, `PUT /auth/password/reset` | public               | reset en 3 étapes                                                  |
 | `DELETE /auth/account`                                                                                       | user                 | suppression ; le core prévient les modules                         |
 | `GET /modules`                                                                                               | user                 | lobby : modules accessibles                                        |
@@ -72,7 +74,7 @@ Un module expose `DELETE /api/<id>/internal/users/:user_id` (header `X-Module-Se
 
 ## Frontend du core
 
-Routes : `/login` (connexion, inscription, activation, reset), `/` (lobby), `/profile`, `/admin` (inscriptions, accès aux modules, modules), `/unlock`.
+Routes : `/login` (connexion, inscription, activation, reset), `/` (lobby), `/profile` (dont la carte « Apparence »), `/admin` (inscriptions, utilisateurs, rôles, droits des rôles, modules), `/unlock`.
 
 ### Convention de redirection (core <-> modules)
 
